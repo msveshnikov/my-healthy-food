@@ -1,9 +1,8 @@
 {
-    "name": "autoresearch-pro",
+    "name": "my-healthy-food",
     "version": "1.0.0",
     "private": true,
     "type": "module",
-    "description": "Automate your research workflow with AI-powered insights and instant, professional PowerPoint generation.",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -37,6 +36,7 @@
         "eslint-plugin-react-hooks": "^5.1.0",
         "eslint-plugin-react-refresh": "^0.4.19",
         "prettier": "^3.5.1",
-        "vite": "^6.1.0"
+        "vite": "^6.1.0",
+        "vite-plugin-pwa": "^0.21.1"
     }
 }
