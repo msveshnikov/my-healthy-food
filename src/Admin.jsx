@@ -34,8 +34,7 @@ import {
     VStack,
     Heading,
     Select,
-    HStack,
-    Switch
+    HStack
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Line, Pie } from 'react-chartjs-2';
