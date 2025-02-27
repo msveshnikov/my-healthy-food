@@ -197,7 +197,22 @@ const Recipe = () => {
                     <List spacing={3}>
                         {recipe.ingredients &&
                             recipe.ingredients.map((ingredient, index) => (
-                                <ListItem key={index} fontSize="lg">
+                                <ListItem
+                                    key={index}
+                                    fontSize="lg"
+                                    display="flex"
+                                    alignItems="center"
+                                >
+                                    {ingredient.imageUrl && (
+                                        <Image
+                                            src={ingredient.imageUrl}
+                                            alt={ingredient.name}
+                                            boxSize="50px"
+                                            mr={4}
+                                            borderRadius="md"
+                                            fallback={<Spinner size="sm" />}
+                                        />
+                                    )}
                                     {ingredient.quantity && ingredient.unit
                                         ? `${ingredient.quantity} ${ingredient.unit} ${ingredient.name}`
                                         : ingredient.name}
