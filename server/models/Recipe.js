@@ -4,35 +4,86 @@ const RecipeSchema = new mongoose.Schema(
     {
         title: {
             type: String,
-            required: true
+            required: true,
+            maxLength: 200
         },
         description: {
-            type: String
+            type: String,
+            maxLength: 500
         },
-        ingredients: [
-            {
-                type: String
-            }
-        ],
-        instructions: [
-            {
-                type: String
-            }
-        ],
         language: {
             type: String,
             default: 'en'
         },
-        source: {
-            type: String,
-            default: 'ai-generated'
+        cuisine: {
+            type: String
         },
-        images: [
+        category: {
+            type: String,
+            description: "Category of the recipe (e.g., 'Breakfast', 'Lunch', 'Dinner', 'Dessert')"
+        },
+        tags: [
             {
-                type: String
+                type: String,
+                maxLength: 50
             }
         ],
-        tags: [
+        slug: {
+            type: String,
+            unique: true,
+            lowercase: true,
+            pattern: '^[a-z0-9-]+$'
+        },
+        ingredients: [
+            {
+                name: {
+                    type: String,
+                    required: true,
+                    minLength: 1,
+                    maxLength: 100
+                },
+                quantity: {
+                    type: String,
+                    maxLength: 50
+                },
+                unit: {
+                    type: String,
+                    maxLength: 20
+                }
+            }
+        ],
+        instructions: [
+            {
+                type: String,
+                required: true,
+                minLength: 1
+            }
+        ],
+        imageUrl: {
+            type: String,
+            format: 'url'
+        },
+        imageSource: {
+            type: String
+        },
+        videoUrl: {
+            type: String,
+            format: 'url'
+        },
+        aiModel: {
+            type: String,
+            enum: [
+                'gpt-4o-mini',
+                'gemini-2.0-flash-thinking-exp-01-21',
+                'deepseek-reasoner',
+                'claude-3-7-sonnet-20250219',
+                'grok-2-latest'
+            ]
+        },
+        searchQuery: {
+            type: String
+        },
+        searchSources: [
             {
                 type: String
             }
@@ -41,21 +92,15 @@ const RecipeSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        createdAt: {
-            type: Date,
-            default: Date.now
+        likes: {
+            type: Number,
+            default: 0,
+            min: 0
         },
-        updatedAt: {
-            type: Date,
-            default: Date.now
-        },
-        slug: {
-            type: String,
-            unique: true,
-            lowercase: true
-        },
-        model: {
-            type: String
+        shares: {
+            type: Number,
+            default: 0,
+            min: 0
         },
         servings: {
             type: String
@@ -70,15 +115,6 @@ const RecipeSchema = new mongoose.Schema(
             type: String
         },
         calories: {
-            type: String
-        },
-        cuisine: {
-            type: String
-        },
-        dishType: {
-            type: String
-        },
-        mealType: {
             type: String
         },
         dietaryRestrictions: [

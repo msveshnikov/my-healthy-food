@@ -1,9 +1,13 @@
-import slugify from 'slugify';
 import { load } from 'cheerio';
 
-export const generateSlug = (title) => {
-    if (!title) return '';
-    return slugify(title, { lower: true });
+export const slugify = (text) => {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-');
 };
 
 export const enrichRecipeMetadata = async (html, recipe) => {

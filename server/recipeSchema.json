@@ -24,6 +24,21 @@
             "type": "string",
             "description": "Type of cuisine (e.g., 'Italian', 'Mexican', 'Indian')"
         },
+        "dishType": {
+            "type": "string",
+            "description": "Type of dish (e.g., 'Appetizer', 'Main Course', 'Dessert')"
+        },
+        "mealType": {
+            "type": "string",
+            "description": "Meal type (e.g., 'Breakfast', 'Lunch', 'Dinner', 'Snack')"
+        },
+        "dietaryRestrictions": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "Dietary restrictions (e.g., 'Vegetarian', 'Vegan', 'Gluten-Free')"
+            }
+        },
         "category": {
             "type": "string",
             "description": "Category of the recipe (e.g., 'Breakfast', 'Lunch', 'Dinner', 'Dessert')"
@@ -43,7 +58,7 @@
         },
         "ingredients": {
             "type": "array",
-            "description": "List of ingredients",
+            "description": "List of ingredients as strings",
             "items": {
                 "type": "object",
                 "properties": {
@@ -75,6 +90,59 @@
                 "description": "Single step in the recipe instructions",
                 "minLength": 1
             }
+        },
+        "images": {
+            "type": "array",
+            "description": "URLs of recipe images",
+            "items": {
+                "type": "string",
+                "format": "url"
+            }
+        },
+        "source": {
+            "type": "string",
+            "description": "Source of the recipe (e.g., 'ai-generated', 'user-submitted')",
+            "default": "ai-generated"
+        },
+        "servings": {
+            "type": "string",
+            "description": "Number of servings the recipe makes"
+        },
+        "prepTime": {
+            "type": "string",
+            "description": "Preparation time (e.g., '15 minutes')"
+        },
+        "cookTime": {
+            "type": "string",
+            "description": "Cooking time (e.g., '30 minutes')"
+        },
+        "totalTime": {
+            "type": "string",
+            "description": "Total time (preparation + cooking time)"
+        },
+        "calories": {
+            "type": "string",
+            "description": "Approximate calories per serving"
+        },
+        "rating": {
+            "type": "number",
+            "description": "User rating of the recipe (out of 5)",
+            "minimum": 0,
+            "maximum": 5
+        },
+        "notes": {
+            "type": "string",
+            "description": "Additional notes or tips for the recipe"
+        },
+        "seoTitle": {
+            "type": "string",
+            "description": "SEO title for the recipe page",
+            "maxLength": 70
+        },
+        "seoDescription": {
+            "type": "string",
+            "description": "SEO description for the recipe page",
+            "maxLength": 160
         },
         "imageUrl": {
             "type": "string",

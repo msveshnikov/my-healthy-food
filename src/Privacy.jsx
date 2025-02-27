@@ -21,8 +21,7 @@ const Privacy = () => {
         necessary: true,
         analytics: true,
         aiProcessing: true,
-        researchData: true,
-        presentationCustomization: true,
+        personalization: true,
         socialFeatures: false
     });
 
@@ -65,11 +64,33 @@ const Privacy = () => {
                         Information Collected
                     </Heading>
                     <UnorderedList spacing={2} mb={4}>
-                        <ListItem>Aggregated Research Data</ListItem>
-                        <ListItem>User Interaction Logs</ListItem>
-                        <ListItem>Presentation Settings</ListItem>
-                        <ListItem>Generated AI Insights</ListItem>
-                        <ListItem>User Profile Information</ListItem>
+                        <ListItem>
+                            Usage data, such as recipes you search for, create, and save.
+                        </ListItem>
+                        <ListItem>Device and browser information.</ListItem>
+                        <ListItem>Cookies and similar tracking technologies.</ListItem>
+                        <ListItem>
+                            User account information if you register, such as username and email.
+                        </ListItem>
+                        <ListItem>Feedback and communication you provide to us.</ListItem>
+                    </UnorderedList>
+                </Box>
+                <Box>
+                    <Heading as="h2" size="lg" mb={4}>
+                        Use of Information
+                    </Heading>
+                    <UnorderedList spacing={2} mb={4}>
+                        <ListItem>
+                            To provide and improve our recipe generation and platform services.
+                        </ListItem>
+                        <ListItem>
+                            To personalize your experience, such as recommending recipes.
+                        </ListItem>
+                        <ListItem>To analyze usage and trends to enhance our platform.</ListItem>
+                        <ListItem>To respond to your inquiries and provide user support.</ListItem>
+                        <ListItem>
+                            To send you updates and promotional materials (if you opt-in).
+                        </ListItem>
                     </UnorderedList>
                 </Box>
                 <Box>
@@ -77,11 +98,18 @@ const Privacy = () => {
                         AI Processing and Data Usage
                     </Heading>
                     <UnorderedList spacing={2} mb={4}>
-                        <ListItem>Natural language processing for research data synthesis</ListItem>
-                        <ListItem>Automated insights generation</ListItem>
-                        <ListItem>Dynamic presentation creation algorithms</ListItem>
-                        <ListItem>Advanced data aggregation techniques</ListItem>
-                        <ListItem>Customizable layout and design adjustments</ListItem>
+                        <ListItem>
+                            AI algorithms are used to generate recipes based on your prompts and
+                            preferences.
+                        </ListItem>
+                        <ListItem>
+                            AI processing helps in understanding user preferences to improve recipe
+                            recommendations.
+                        </ListItem>
+                        <ListItem>
+                            Anonymized and aggregated data may be used to train and improve our AI
+                            models.
+                        </ListItem>
                     </UnorderedList>
                 </Box>
                 <Box>
@@ -90,9 +118,8 @@ const Privacy = () => {
                     </Heading>
                     <Text mb={4}>
                         We retain your personal data only for as long as necessary to fulfill the
-                        purposes for which it was collected, including compliance with legal,
-                        accounting, or reporting requirements. You may request deletion or
-                        modification of your data in accordance with applicable law.
+                        purposes outlined in this Privacy Policy, or as required by law. You can
+                        request deletion of your account and associated data by contacting us.
                     </Text>
                 </Box>
                 <Box>
@@ -100,10 +127,9 @@ const Privacy = () => {
                         Data Security
                     </Heading>
                     <Text mb={4}>
-                        We implement robust security measures including encryption, secure data
-                        storage, and access controls to protect your personal data. However, no
-                        method of transmission over the internet or method of electronic storage is
-                        completely secure.
+                        We implement reasonable security measures to protect your personal
+                        information from unauthorized access, use, or disclosure. These measures
+                        include encryption, firewalls, and secure server facilities.
                     </Text>
                 </Box>
                 <Box>
@@ -111,9 +137,10 @@ const Privacy = () => {
                         Third-Party Disclosure
                     </Heading>
                     <Text mb={4}>
-                        We do not sell, trade, or otherwise transfer your personal information to
-                        outside parties except as necessary to comply with the law, enforce our
-                        policies, or protect our rights.
+                        We may share your information with third-party service providers who assist
+                        us in operating our platform, conducting our business, or serving you. These
+                        providers are contractually obligated to protect your information. We do not
+                        sell your personal information to third parties.
                     </Text>
                 </Box>
                 <Box>
@@ -121,11 +148,12 @@ const Privacy = () => {
                         Your Rights
                     </Heading>
                     <Text mb={4}>
-                        You have the right to access, correct, or request deletion of your personal
-                        data. To exercise these rights or for any inquiries regarding your data,
-                        please contact us at{' '}
-                        <Link href="mailto:privacy@autoresearch.pro" color="blue.500">
-                            privacy@autoresearch.pro
+                        You have the right to access, correct, or delete your personal data. You may
+                        also have the right to object to or restrict certain processing of your
+                        data. To exercise these rights or for any privacy-related inquiries, please
+                        contact us at{' '}
+                        <Link href="mailto:privacy@myhealthy.food" color="blue.500">
+                            privacy@myhealthy.food
                         </Link>
                         .
                     </Text>
@@ -135,10 +163,9 @@ const Privacy = () => {
                         Policy Modifications
                     </Heading>
                     <Text mb={4}>
-                        We reserve the right to modify this Privacy Policy at any time. Any changes
-                        will be posted on this page with a revised effective date. Continued use of
-                        our services after any modifications constitutes acceptance of the updated
-                        policy.
+                        We may update this Privacy Policy from time to time. We will notify you of
+                        any significant changes by posting the new policy on our platform and
+                        updating the "Last Updated" date.
                     </Text>
                 </Box>
                 <Box>
@@ -177,23 +204,13 @@ const Privacy = () => {
                             />
                         </FormControl>
                         <FormControl display="flex" alignItems="center">
-                            <FormLabel htmlFor="researchData" mb="0">
-                                Research Data Collection
+                            <FormLabel htmlFor="personalization" mb="0">
+                                Personalization
                             </FormLabel>
                             <Switch
-                                id="researchData"
-                                isChecked={consentSettings.researchData}
-                                onChange={() => handleConsentChange('researchData')}
-                            />
-                        </FormControl>
-                        <FormControl display="flex" alignItems="center">
-                            <FormLabel htmlFor="presentationCustomization" mb="0">
-                                Presentation Customization
-                            </FormLabel>
-                            <Switch
-                                id="presentationCustomization"
-                                isChecked={consentSettings.presentationCustomization}
-                                onChange={() => handleConsentChange('presentationCustomization')}
+                                id="personalization"
+                                isChecked={consentSettings.personalization}
+                                onChange={() => handleConsentChange('personalization')}
                             />
                         </FormControl>
                         <FormControl display="flex" alignItems="center">
@@ -213,9 +230,10 @@ const Privacy = () => {
                         Contact Us
                     </Heading>
                     <Text mb={4}>
-                        For any inquiries regarding this Privacy Policy, please contact us at{' '}
-                        <Link href="mailto:privacy@autoresearch.pro" color="blue.500">
-                            privacy@autoresearch.pro
+                        If you have any questions or concerns about this Privacy Policy or our data
+                        practices, please contact us at{' '}
+                        <Link href="mailto:privacy@myhealthy.food" color="blue.500">
+                            privacy@myhealthy.food
                         </Link>
                         .
                     </Text>

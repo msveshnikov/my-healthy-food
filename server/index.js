@@ -23,7 +23,7 @@ import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
 import { fetchSearchResults, searchWebContent } from './search.js';
-import { enrichRecipeMetadata } from './utils.js';
+import { enrichRecipeMetadata, slugify } from './utils.js';
 import { getTextClaude } from './claude.js';
 
 dotenv.config();
@@ -150,16 +150,6 @@ const extractCodeSnippet = (text) => {
     return match ? match[1] : text;
 };
 
-const slugify = (text) => {
-    return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w-]+/g, '')
-        .replace(/--+/g, '-');
-};
-
 app.post('/api/generate-recipe', async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
@@ -204,6 +194,36 @@ ${exampleSchema}`;
         if (parsed && parsed.description === undefined && parsed.recipeData?.description) {
             parsed.description = parsed.recipeData.description;
         }
+        if (parsed && parsed.ingredients === undefined && parsed.recipeData?.ingredients) {
+            parsed.ingredients = parsed.recipeData.ingredients;
+        }
+        if (parsed && parsed.instructions === undefined && parsed.recipeData?.instructions) {
+            parsed.instructions = parsed.recipeData.instructions;
+        }
+        if (parsed && parsed.cuisine === undefined && parsed.recipeData?.cuisine) {
+            parsed.cuisine = parsed.recipeData.cuisine;
+        }
+        if (parsed && parsed.category === undefined && parsed.recipeData?.category) {
+            parsed.category = parsed.recipeData.category;
+        }
+        if (parsed && parsed.tags === undefined && parsed.recipeData?.tags) {
+            parsed.tags = parsed.recipeData.tags;
+        }
+        if (parsed && parsed.imageUrl === undefined && parsed.recipeData?.imageUrl) {
+            parsed.imageUrl = parsed.recipeData.imageUrl;
+        }
+        if (parsed && parsed.videoUrl === undefined && parsed.recipeData?.videoUrl) {
+            parsed.videoUrl = parsed.recipeData.videoUrl;
+        }
+        if (parsed && parsed.aiModel === undefined && parsed.recipeData?.aiModel) {
+            parsed.aiModel = model;
+        }
+        if (parsed && parsed.searchQuery === undefined) {
+            parsed.searchQuery = prompt;
+        }
+        if (parsed && parsed.searchSources === undefined) {
+            parsed.searchSources = webSearchContent?.sources || [];
+        }
 
         const recipe = new Recipe({
             title: parsed.title || prompt,
@@ -212,7 +232,18 @@ ${exampleSchema}`;
             model,
             recipeData: parsed,
             slug: slugify(parsed.title || prompt),
-            userId: req?.user?.id
+            userId: req?.user?.id,
+            cuisine: parsed.cuisine,
+            category: parsed.category,
+            tags: parsed.tags,
+            imageUrl: parsed.imageUrl,
+            imageSource: imageSource,
+            videoUrl: parsed.videoUrl,
+            aiModel: model,
+            searchQuery: parsed.searchQuery,
+            searchSources: parsed.searchSources,
+            ingredients: parsed.ingredients,
+            instructions: parsed.instructions
         });
 
         await recipe.save();
@@ -247,7 +278,8 @@ app.get('/api/recipes', async (req, res) => {
             title: recipe.title,
             description: recipe.description,
             model: recipe.model,
-            slug: recipe.slug
+            slug: recipe.slug,
+            imageUrl: recipe.imageUrl
         }));
         res.status(200).json(limitedRecipes);
     } catch (error) {
@@ -279,7 +311,8 @@ app.get('/api/myrecipes', authenticateToken, async (req, res) => {
             title: recipe.title,
             description: recipe.description,
             model: recipe.model,
-            slug: recipe.slug
+            slug: recipe.slug,
+            imageUrl: recipe.imageUrl
         }));
         res.status(200).json(limitedRecipes);
     } catch (error) {
