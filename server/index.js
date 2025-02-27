@@ -36,6 +36,11 @@ const app = express();
 app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production' ? 'https://MyHealthy.Food' : '*'
+};
+app.use(cors(corsOptions));
+
 app.use((req, res, next) => {
     if (req.originalUrl === '/api/stripe-webhook') {
         next();
@@ -55,7 +60,6 @@ const metricsMiddleware = promBundle({
     }
 });
 app.use(metricsMiddleware);
-app.use(cors());
 app.use(express.static(join(__dirname, '../dist')));
 app.use(morgan('dev'));
 app.use(compression());
@@ -483,6 +487,10 @@ ${urls}
     } catch (err) {
         res.status(500).send(err.message);
     }
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
 });
 
 app.get('/', async (req, res) => {

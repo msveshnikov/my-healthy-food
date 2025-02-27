@@ -19,7 +19,7 @@ import {
     Link
 } from '@chakra-ui/react';
 import { API_URL, UserContext } from './App';
-import PresentationList from './PresentationList';
+import RecipeList from './RecipeList';
 
 const Profile = () => {
     const { user, setUser } = useContext(UserContext);

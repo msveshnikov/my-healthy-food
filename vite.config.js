@@ -9,7 +9,7 @@ export default defineConfig({
         //     org: 'maxsoft',
         //     project: 'auto-research'
         // })
-    ],
+    ]
 
     // build: {
     //     sourcemap: true

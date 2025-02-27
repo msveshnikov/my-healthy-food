@@ -88,7 +88,8 @@ export const getGoogleImage = async (prompt) => {
             return { url: null, credits: [] };
         }
         return randomImage.image;
-    } catch {
+    } catch (e) {
+        console.error('Error fetching Google Image:', e);
         return null;
     }
 };

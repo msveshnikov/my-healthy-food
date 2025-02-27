@@ -84,9 +84,7 @@ const adminRoutes = (app) => {
 
     app.get('/api/admin/recipes', authenticateToken, isAdmin, async (req, res) => {
         try {
-            const recipes = await Recipe.find()
-                .populate('userId', 'email')
-                .sort({ createdAt: -1 });
+            const recipes = await Recipe.find().populate('userId', 'email').sort({ createdAt: -1 });
             res.json(recipes);
         } catch (error) {
             console.error('Admin recipes fetch error:', error);
@@ -94,27 +92,22 @@ const adminRoutes = (app) => {
         }
     });
 
-    app.get(
-        '/api/admin/recipes-model-stats',
-        authenticateToken,
-        isAdmin,
-        async (req, res) => {
-            try {
-                const modelStats = await Recipe.aggregate([
-                    {
-                        $group: {
-                            _id: '$model',
-                            count: { $sum: 1 }
-                        }
+    app.get('/api/admin/recipes-model-stats', authenticateToken, isAdmin, async (req, res) => {
+        try {
+            const modelStats = await Recipe.aggregate([
+                {
+                    $group: {
+                        _id: '$model',
+                        count: { $sum: 1 }
                     }
-                ]);
-                res.json(modelStats);
-            } catch (error) {
-                console.error('Admin recipe model stats error:', error);
-                res.status(500).json({ error: 'Internal server error' });
-            }
+                }
+            ]);
+            res.json(modelStats);
+        } catch (error) {
+            console.error('Admin recipe model stats error:', error);
+            res.status(500).json({ error: 'Internal server error' });
         }
-    );
+    });
 
     app.delete('/api/admin/users/:id', authenticateToken, isAdmin, async (req, res) => {
         try {
@@ -184,29 +177,24 @@ const adminRoutes = (app) => {
         }
     });
 
-    app.put(
-        '/api/admin/recipes/:id/privacy',
-        authenticateToken,
-        isAdmin,
-        async (req, res) => {
-            try {
-                const { isPrivate } = req.body;
-                if (typeof isPrivate !== 'boolean') {
-                    return res.status(400).json({ error: 'Invalid private status' });
-                }
-                const recipe = await Recipe.findById(req.params.id);
-                if (!recipe) {
-                    return res.status(404).json({ error: 'Recipe not found' });
-                }
-                recipe['isPrivate'] = isPrivate;
-                await recipe.save();
-                res.json({ message: 'Recipe privacy status updated successfully' });
-            } catch (error) {
-                console.error('Admin recipe privacy update error:', error);
-                res.status(500).json({ error: 'Internal server error' });
+    app.put('/api/admin/recipes/:id/privacy', authenticateToken, isAdmin, async (req, res) => {
+        try {
+            const { isPrivate } = req.body;
+            if (typeof isPrivate !== 'boolean') {
+                return res.status(400).json({ error: 'Invalid private status' });
             }
+            const recipe = await Recipe.findById(req.params.id);
+            if (!recipe) {
+                return res.status(404).json({ error: 'Recipe not found' });
+            }
+            recipe['isPrivate'] = isPrivate;
+            await recipe.save();
+            res.json({ message: 'Recipe privacy status updated successfully' });
+        } catch (error) {
+            console.error('Admin recipe privacy update error:', error);
+            res.status(500).json({ error: 'Internal server error' });
         }
-    );
+    });
 };
 
 export default adminRoutes;
