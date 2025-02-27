@@ -49,6 +49,10 @@ const RecipeSchema = new mongoose.Schema(
                 unit: {
                     type: String,
                     maxLength: 20
+                },
+                imageUrl: {
+                    type: String,
+                    format: 'url'
                 }
             }
         ],

@@ -111,16 +111,13 @@ export const replaceRecipeImages = async (recipe, imageSource) => {
         }
         if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
             for (let i = 0; i < recipe.ingredients.length; i++) {
-                if (
-                    typeof recipe.ingredients[i] === 'string' &&
-                    recipe.ingredients[i].includes('image')
-                ) {
+                {
                     const imageUrl =
                         imageSource !== 'google'
-                            ? await getUnsplashImage(recipe.ingredients[i])
-                            : await getGoogleImage(recipe.ingredients[i]);
+                            ? await getUnsplashImage(recipe.ingredients[i].name)
+                            : await getGoogleImage(recipe.ingredients[i].name);
                     if (imageUrl) {
-                        recipe.ingredients[i] = imageUrl;
+                        recipe.ingredients[i].imageUrl = imageUrl;
                     }
                 }
             }
@@ -141,15 +138,7 @@ export const replaceRecipeImages = async (recipe, imageSource) => {
                 }
             }
         }
-        // if (recipe.description) {
-        //     const imageUrl =
-        //         imageSource !== 'google'
-        //             ? await getUnsplashImage(recipe.description)
-        //             : await getGoogleImage(recipe.description);
-        //     if (imageUrl) {
-        //         recipe.description = imageUrl;
-        //     }
-        // }
+
         if (recipe.title) {
             const imageUrl =
                 imageSource !== 'google'
