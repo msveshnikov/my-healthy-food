@@ -1,7 +1,7 @@
 import { ChakraProvider, Box, Container, VStack, extendTheme } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Landing } from './Landing';
-import { lazy, Suspense, createContext, useState } from 'react';
+import { lazy, Suspense, createContext, useState, useEffect } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Navbar from './Navbar';
 import Terms from './Terms';
@@ -46,20 +46,20 @@ const theme = extendTheme({
 function App() {
     const [user, setUser] = useState();
 
-    // useEffect(() => {
-    //     const token = localStorage.getItem('token');
-    //     if (token) {
-    //         fetch(`${API_URL}/api/profile`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`
-    //             }
-    //         })
-    //             .then((res) => res.json())
-    //             .then((data) => {
-    //                 setUser(data);
-    //             });
-    //     }
-    // }, []);
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            fetch(`${API_URL}/api/profile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    setUser(data);
+                });
+        }
+    }, []);
 
     return (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

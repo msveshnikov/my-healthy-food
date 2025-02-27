@@ -141,26 +141,22 @@ export const replaceRecipeImages = async (recipe, imageSource) => {
                 }
             }
         }
-        if (
-            recipe.description &&
-            typeof recipe.description === 'string' &&
-            recipe.description.includes('image')
-        ) {
-            const imageUrl =
-                imageSource !== 'google'
-                    ? await getUnsplashImage(recipe.description)
-                    : await getGoogleImage(recipe.description);
-            if (imageUrl) {
-                recipe.description = imageUrl;
-            }
-        }
-        if (recipe.title && typeof recipe.title === 'string' && recipe.title.includes('image')) {
+        // if (recipe.description) {
+        //     const imageUrl =
+        //         imageSource !== 'google'
+        //             ? await getUnsplashImage(recipe.description)
+        //             : await getGoogleImage(recipe.description);
+        //     if (imageUrl) {
+        //         recipe.description = imageUrl;
+        //     }
+        // }
+        if (recipe.title) {
             const imageUrl =
                 imageSource !== 'google'
                     ? await getUnsplashImage(recipe.title)
                     : await getGoogleImage(recipe.title);
             if (imageUrl) {
-                recipe.title = imageUrl;
+                recipe.imageUrl = imageUrl;
             }
         }
     }

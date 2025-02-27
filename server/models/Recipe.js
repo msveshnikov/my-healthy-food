@@ -71,14 +71,7 @@ const RecipeSchema = new mongoose.Schema(
             format: 'url'
         },
         aiModel: {
-            type: String,
-            enum: [
-                'gpt-4o-mini',
-                'gemini-2.0-flash-thinking-exp-01-21',
-                'deepseek-reasoner',
-                'claude-3-7-sonnet-20250219',
-                'grok-2-latest'
-            ]
+            type: String
         },
         searchQuery: {
             type: String

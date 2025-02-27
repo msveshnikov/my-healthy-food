@@ -100,16 +100,6 @@ const generateAIResponse = async (prompt, model, temperature = 0.7) => {
     }
 };
 
-export const getIpFromRequest = (req) => {
-    let ips = (
-        req.headers['x-real-ip'] ||
-        req.headers['x-forwarded-for'] ||
-        req.connection.remoteAddress ||
-        ''
-    ).split(',');
-    return ips[0].trim();
-};
-
 export const checkAiLimit = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id);
@@ -154,12 +144,11 @@ app.post('/api/generate-recipe', async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
         console.log(prompt, language, model, temperature, deepResearch, imageSource);
-        prompt = prompt?.substring(0, 1000);
+        prompt = prompt?.substring(0, 100);
         language = language || 'en';
         model = model || 'gemini-2.0-flash-thinking-exp-01-21';
         temperature = temperature || 0.7;
         imageSource = imageSource || 'unsplash';
-        deepResearch = deepResearch === true || deepResearch === 'true';
 
         const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
 
@@ -188,48 +177,11 @@ ${exampleSchema}`;
         }
 
         parsed = await replaceRecipeImages(parsed, imageSource);
-        if (parsed && parsed.title === undefined && parsed.recipeData?.title) {
-            parsed.title = parsed.recipeData.title;
-        }
-        if (parsed && parsed.description === undefined && parsed.recipeData?.description) {
-            parsed.description = parsed.recipeData.description;
-        }
-        if (parsed && parsed.ingredients === undefined && parsed.recipeData?.ingredients) {
-            parsed.ingredients = parsed.recipeData.ingredients;
-        }
-        if (parsed && parsed.instructions === undefined && parsed.recipeData?.instructions) {
-            parsed.instructions = parsed.recipeData.instructions;
-        }
-        if (parsed && parsed.cuisine === undefined && parsed.recipeData?.cuisine) {
-            parsed.cuisine = parsed.recipeData.cuisine;
-        }
-        if (parsed && parsed.category === undefined && parsed.recipeData?.category) {
-            parsed.category = parsed.recipeData.category;
-        }
-        if (parsed && parsed.tags === undefined && parsed.recipeData?.tags) {
-            parsed.tags = parsed.recipeData.tags;
-        }
-        if (parsed && parsed.imageUrl === undefined && parsed.recipeData?.imageUrl) {
-            parsed.imageUrl = parsed.recipeData.imageUrl;
-        }
-        if (parsed && parsed.videoUrl === undefined && parsed.recipeData?.videoUrl) {
-            parsed.videoUrl = parsed.recipeData.videoUrl;
-        }
-        if (parsed && parsed.aiModel === undefined && parsed.recipeData?.aiModel) {
-            parsed.aiModel = model;
-        }
-        if (parsed && parsed.searchQuery === undefined) {
-            parsed.searchQuery = prompt;
-        }
-        if (parsed && parsed.searchSources === undefined) {
-            parsed.searchSources = webSearchContent?.sources || [];
-        }
 
         const recipe = new Recipe({
             title: parsed.title || prompt,
             description: parsed.description,
             language,
-            model,
             recipeData: parsed,
             slug: slugify(parsed.title || prompt),
             userId: req?.user?.id,

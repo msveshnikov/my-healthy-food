@@ -10,6 +10,16 @@ export const slugify = (text) => {
         .replace(/--+/g, '-');
 };
 
+export const getIpFromRequest = (req) => {
+    let ips = (
+        req.headers['x-real-ip'] ||
+        req.headers['x-forwarded-for'] ||
+        req.connection.remoteAddress ||
+        ''
+    ).split(',');
+    return ips[0].trim();
+};
+
 export const enrichRecipeMetadata = async (html, recipe) => {
     try {
         if (!recipe || !recipe.slug) return html;
