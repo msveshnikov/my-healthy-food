@@ -1,0 +1,144 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Recipe",
+    "description": "Schema for recipe objects",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string",
+            "description": "Title of the recipe",
+            "minLength": 1,
+            "maxLength": 200
+        },
+        "description": {
+            "type": "string",
+            "description": "Short description or summary of the recipe",
+            "maxLength": 500
+        },
+        "language": {
+            "type": "string",
+            "description": "Language of the recipe (e.g., 'en', 'es', 'fr')",
+            "default": "en"
+        },
+        "cuisine": {
+            "type": "string",
+            "description": "Type of cuisine (e.g., 'Italian', 'Mexican', 'Indian')"
+        },
+        "category": {
+            "type": "string",
+            "description": "Category of the recipe (e.g., 'Breakfast', 'Lunch', 'Dinner', 'Dessert')"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "Keywords or tags for recipe discovery",
+                "maxLength": 50
+            }
+        },
+        "slug": {
+            "type": "string",
+            "description": "SEO-friendly URL slug for the recipe",
+            "pattern": "^[a-z0-9-]+$"
+        },
+        "ingredients": {
+            "type": "array",
+            "description": "List of ingredients",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the ingredient",
+                        "minLength": 1,
+                        "maxLength": 100
+                    },
+                    "quantity": {
+                        "type": "string",
+                        "description": "Quantity of the ingredient (e.g., '1 cup', '2 tbsp')",
+                        "maxLength": 50
+                    },
+                    "unit": {
+                        "type": "string",
+                        "description": "Unit of measurement (e.g., 'cup', 'tbsp', 'g', 'ml')",
+                        "maxLength": 20
+                    }
+                },
+                "required": ["name"]
+            }
+        },
+        "instructions": {
+            "type": "array",
+            "description": "Step-by-step cooking instructions",
+            "items": {
+                "type": "string",
+                "description": "Single step in the recipe instructions",
+                "minLength": 1
+            }
+        },
+        "imageUrl": {
+            "type": "string",
+            "description": "URL of the main recipe image",
+            "format": "url"
+        },
+        "imageSource": {
+            "type": "string",
+            "description": "Source of the image (e.g., 'Unsplash', 'Google Images', 'User Upload')"
+        },
+        "videoUrl": {
+            "type": "string",
+            "description": "Optional URL of a recipe video",
+            "format": "url"
+        },
+        "aiModel": {
+            "type": "string",
+            "description": "AI model used to generate the recipe",
+            "enum": [
+                "gpt-4o-mini",
+                "gemini-2.0-flash-thinking-exp-01-21",
+                "deepseek-reasoner",
+                "claude-3-7-sonnet-20250219",
+                "grok-2-latest"
+            ]
+        },
+        "searchQuery": {
+            "type": "string",
+            "description": "Search query used to enhance the recipe"
+        },
+        "searchSources": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "Sources used for web search"
+            }
+        },
+        "userId": {
+            "type": "string",
+            "description": "ID of the user who created the recipe",
+            "format": "ObjectId"
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of recipe creation"
+        },
+        "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of last update"
+        },
+        "likes": {
+            "type": "integer",
+            "description": "Number of likes for the recipe",
+            "default": 0,
+            "minimum": 0
+        },
+        "shares": {
+            "type": "integer",
+            "description": "Number of shares for the recipe",
+            "default": 0,
+            "minimum": 0
+        }
+    },
+    "required": ["title", "ingredients", "instructions"]
+}

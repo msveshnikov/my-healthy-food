@@ -16,9 +16,9 @@ import { getTextGrok } from './grok.js';
 import { getTextGpt } from './openai.js';
 import { getTextDeepseek } from './deepseek.js';
 import User from './models/User.js';
-import Presentation from './models/Presentation.js';
+import Recipe from './models/Recipe.js';
 import Feedback from './models/Feedback.js';
-import { replaceGraphics } from './imageService.js';
+import { imageService } from './imageService.js';
 import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
@@ -121,7 +121,7 @@ export const checkAiLimit = async (req, res, next) => {
                     if (user.aiRequestCount >= 3) {
                         return res
                             .status(429)
-                            .json({ error: 'Daily presentation limit reached, please upgrade' });
+                            .json({ error: 'Daily recipe limit reached, please upgrade' });
                     }
                     user.aiRequestCount++;
                 } else {
@@ -156,72 +156,59 @@ const slugify = (text) => {
         .replace(/--+/g, '-');
 };
 
-app.post('/api/generate-presentation', authenticateToken, checkAiLimit, async (req, res) => {
+app.post('/api/generate-recipe', authenticateToken, checkAiLimit, async (req, res) => {
     try {
-        let { topic, numSlides, model, temperature, deepResearch, imageSource, fullSpeakerNotes } =
-            req.body;
-        console.log(topic, numSlides, model, temperature, deepResearch, imageSource);
-        topic = topic?.substring(0, 1000);
-        numSlides = numSlides || 10;
+        let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
+        console.log(prompt, language, model, temperature, deepResearch, imageSource);
+        prompt = prompt?.substring(0, 1000);
+        language = language || 'en';
         model = model || 'o3-mini';
         temperature = temperature || 0.7;
 
         const user = await User.findById(req.user.id);
-        const exampleSchema = fs.readFileSync(join(__dirname, 'presentationSchema.json'), 'utf8');
-        const preferencesSummary = `
-          Slide Layout: ${user.presentationSettings.slideLayout || 'standard'},
-          Theme: ${user.presentationSettings.theme || 'light'}`;
+        const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
 
-        const webSearchContent = await fetchSearchResults(topic);
+        const webSearchContent = await fetchSearchResults(prompt);
         let webContent = '';
         if (deepResearch) {
             webContent = await searchWebContent(webSearchContent);
         }
 
-        let prompt = `Generate a professional PowerPoint presentation with ${numSlides} slides on the topic "${topic}".
-Consider the following user preferences:
-${preferencesSummary}
+        let aiPrompt = `Generate a recipe based on the following prompt: "${prompt}".
+Generate recipe in "${language}" language.
 Research the web and think about the topic before generating. Web search results
 <web_search_results>${JSON.stringify(webSearchContent)}</web_search_results>
 <web_content>${webContent}</web_content>
-Use language of topic.
-Format the result as a JSON object with a key "slides" containing an array of slide objects.
-Generate diverse and original/colorful/non-boring content.
-Please ensure that text elements are not overlapped. Dont include markdown formatting.
-Use the following example schema as a reference for slide structure:
+Format the result as a JSON object representing the recipe.
+Use the following example schema as a reference for recipe structure:
 ${exampleSchema}`;
-        if (fullSpeakerNotes) {
-            prompt +=
-                '\nAdditionally, include full, detailed speaker notes for each slide, outlining exactly what the speaker should say.';
-        }
 
         let parsed;
         try {
-            const result = await generateAIResponse(prompt, model, temperature);
+            const result = await generateAIResponse(aiPrompt, model, temperature);
             parsed = JSON.parse(extractCodeSnippet(result));
         } catch (e) {
             console.error(e);
             return res.status(500).json({ error: 'Something went wrong, please try again' });
         }
-        parsed = await replaceGraphics(parsed, imageSource);
+        parsed = await imageService(parsed, imageSource);
 
         const isPrivate =
             (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') &&
             !user.isAdmin;
 
-        const presentation = new Presentation({
-            title: parsed.title || topic,
+        const recipe = new Recipe({
+            title: parsed.title || prompt,
             description: parsed.description,
-            version: parsed.version,
+            language,
             model,
-            theme: parsed.theme,
-            slides: parsed.slides,
-            slug: slugify(parsed.title || topic),
+            recipeData: parsed,
+            slug: slugify(parsed.title || prompt),
             userId: req.user.id,
             isPrivate
         });
 
-        await presentation.save();
+        await recipe.save();
 
         res.status(201).json(parsed);
     } catch (error) {
@@ -230,7 +217,7 @@ ${exampleSchema}`;
     }
 });
 
-app.get('/api/presentations', async (req, res) => {
+app.get('/api/recipes', async (req, res) => {
     try {
         const search = req.query.search;
         let filter = { $or: [{ isPrivate: false }, { isPrivate: { $exists: false } }] };
@@ -247,26 +234,22 @@ app.get('/api/presentations', async (req, res) => {
                 ]
             };
         }
-        const presentations = await Presentation.find(filter).sort({ createdAt: -1 }).limit(300);
-        const limitedPresentations = presentations.map((presentation) => ({
-            _id: presentation._id,
-            title: presentation.title,
-            description: presentation.description,
-            model: presentation.model,
-            firstSlideTitle:
-                presentation.slides && presentation.slides.length > 0
-                    ? presentation.slides[0].title
-                    : null,
-            slug: presentation.slug
+        const recipes = await Recipe.find(filter).sort({ createdAt: -1 }).limit(300);
+        const limitedRecipes = recipes.map((recipe) => ({
+            _id: recipe._id,
+            title: recipe.title,
+            description: recipe.description,
+            model: recipe.model,
+            slug: recipe.slug
         }));
-        res.status(200).json(limitedPresentations);
+        res.status(200).json(limitedRecipes);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
 
-app.get('/api/mypresentations', authenticateToken, async (req, res) => {
+app.get('/api/myrecipes', authenticateToken, async (req, res) => {
     try {
         const search = req.query.search;
         let query = { userId: req.user.id };
@@ -283,66 +266,60 @@ app.get('/api/mypresentations', authenticateToken, async (req, res) => {
                 ]
             };
         }
-        const presentations = await Presentation.find(query);
-        const limitedPresentations = presentations.map((presentation) => ({
-            _id: presentation._id,
-            title: presentation.title,
-            description: presentation.description,
-            model: presentation.model,
-            firstSlideTitle:
-                presentation.slides && presentation.slides.length > 0
-                    ? presentation.slides[0].title
-                    : null,
-            slug: presentation.slug
+        const recipes = await Recipe.find(query);
+        const limitedRecipes = recipes.map((recipe) => ({
+            _id: recipe._id,
+            title: recipe.title,
+            description: recipe.description,
+            model: recipe.model,
+            slug: recipe.slug
         }));
-        res.status(200).json(limitedPresentations);
+        res.status(200).json(limitedRecipes);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
 
-app.get('/api/presentations/:identifier', async (req, res) => {
+app.get('/api/recipes/:identifier', async (req, res) => {
     try {
         const { identifier } = req.params;
-        let presentation = null;
+        let recipe = null;
         if (mongoose.Types.ObjectId.isValid(identifier)) {
-            presentation = await Presentation.findById(identifier);
+            recipe = await Recipe.findById(identifier);
         }
-        if (!presentation) {
-            presentation = await Presentation.findOne({ slug: identifier });
+        if (!recipe) {
+            recipe = await Recipe.findOne({ slug: identifier });
         }
-        if (!presentation) return res.status(404).json({ error: 'Presentation not found' });
-        res.status(200).json(presentation);
+        if (!recipe) return res.status(404).json({ error: 'Recipe not found' });
+        res.status(200).json(recipe);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
 
-app.delete('/api/presentations/:id', authenticateToken, async (req, res) => {
+app.delete('/api/recipes/:id', authenticateToken, async (req, res) => {
     try {
-        const presentationId = req.params.id;
-        if (!mongoose.Types.ObjectId.isValid(presentationId)) {
-            return res.status(400).json({ error: 'Invalid presentation ID' });
+        const recipeId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+            return res.status(400).json({ error: 'Invalid recipe ID' });
         }
 
-        const presentation = await Presentation.findById(presentationId);
-        if (!presentation) {
-            return res.status(404).json({ error: 'Presentation not found' });
+        const recipe = await Recipe.findById(recipeId);
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found' });
         }
 
-        if (presentation.userId.toString() !== req.user.id && !req.user.isAdmin) {
-            return res
-                .status(403)
-                .json({ error: 'Unauthorized: You do not own this presentation' });
+        if (recipe.userId.toString() !== req.user.id && !req.user.isAdmin) {
+            return res.status(403).json({ error: 'Unauthorized: You do not own this recipe' });
         }
 
-        await Presentation.findByIdAndDelete(presentationId);
-        res.status(200).json({ message: 'Presentation deleted successfully' });
+        await Recipe.findByIdAndDelete(recipeId);
+        res.status(200).json({ message: 'Recipe deleted successfully' });
     } catch (error) {
-        console.error('Error deleting presentation:', error);
-        res.status(500).json({ error: 'Failed to delete presentation' });
+        console.error('Error deleting recipe:', error);
+        res.status(500).json({ error: 'Failed to delete recipe' });
     }
 });
 
@@ -469,11 +446,11 @@ app.get('/api/docs', async (req, res) => {
 
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        const presentations = await Presentation.find();
+        const recipes = await Recipe.find();
         const staticRoutes = [
             '/',
             '/research',
-            '/presentation',
+            '/recipe',
             '/insights',
             '/privacy',
             '/terms',
@@ -487,12 +464,12 @@ app.get('/sitemap.xml', async (req, res) => {
         ];
 
         let urls = staticRoutes
-            .map((route) => `<url><loc>https://AutoResearch.pro${route}</loc></url>`)
+            .map((route) => `<url><loc>https://MyHealthy.Food${route}</loc></url>`)
             .join('');
 
-        presentations.forEach((p) => {
-            if (p.slug) {
-                urls += `<url><loc>https://AutoResearch.pro/presentation/${p.slug}</loc></url>`;
+        recipes.forEach((r) => {
+            if (r.slug) {
+                urls += `<url><loc>https://MyHealthy.Food/recipe/${r.slug}</loc></url>`;
             }
         });
 
@@ -515,10 +492,10 @@ app.get('/', async (req, res) => {
 
 app.get('*', async (req, res) => {
     const html = fs.readFileSync(join(__dirname, '../dist/index.html'), 'utf8');
-    if (!req.path.startsWith('/presentation/')) {
+    if (!req.path.startsWith('/recipe/')) {
         return res.send(html);
     }
-    const slug = req.path.substring(14);
+    const slug = req.path.substring(8);
     const enrichedHtml = await enrichMetadata(html, slug);
     res.send(enrichedHtml);
 });
