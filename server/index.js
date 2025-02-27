@@ -23,7 +23,7 @@ import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
 import { fetchSearchResults, searchWebContent } from './search.js';
-import { enrichMetadata } from './utils.js';
+import { enrichRecipeMetadata } from './utils.js';
 import { getTextClaude } from './claude.js';
 
 dotenv.config();
@@ -496,7 +496,7 @@ app.get('*', async (req, res) => {
         return res.send(html);
     }
     const slug = req.path.substring(8);
-    const enrichedHtml = await enrichMetadata(html, slug);
+    const enrichedHtml = await enrichRecipeMetadata(html, slug);
     res.send(enrichedHtml);
 });
 

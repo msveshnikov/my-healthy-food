@@ -1,6 +1,6 @@
 import { authenticateToken, isAdmin } from './middleware/auth.js';
 import User from './models/User.js';
-import Presentation from './models/Presentation.js';
+import Recipe from './models/Recipe.js';
 import Feedback from './models/Feedback.js';
 
 const adminRoutes = (app) => {
@@ -20,14 +20,14 @@ const adminRoutes = (app) => {
                 totalUsers,
                 premiumUsers,
                 trialingUsers,
-                totalPresentations,
+                totalRecipes,
                 userGrowth,
-                presentationGrowth
+                recipeGrowth
             ] = await Promise.all([
                 User.countDocuments(),
                 User.countDocuments({ subscriptionStatus: 'active' }),
                 User.countDocuments({ subscriptionStatus: 'trialing' }),
-                Presentation.countDocuments(),
+                Recipe.countDocuments(),
                 User.aggregate([
                     {
                         $group: {
@@ -38,7 +38,7 @@ const adminRoutes = (app) => {
                     { $sort: { _id: 1 } },
                     { $limit: 30 }
                 ]),
-                Presentation.aggregate([
+                Recipe.aggregate([
                     {
                         $group: {
                             _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
@@ -59,9 +59,9 @@ const adminRoutes = (app) => {
                     conversionRate
                 },
                 userGrowth,
-                presentationsStats: {
-                    totalPresentations,
-                    presentationGrowth
+                recipesStats: {
+                    totalRecipes,
+                    recipeGrowth
                 }
             });
         } catch (error) {
@@ -82,25 +82,25 @@ const adminRoutes = (app) => {
         }
     });
 
-    app.get('/api/admin/presentations', authenticateToken, isAdmin, async (req, res) => {
+    app.get('/api/admin/recipes', authenticateToken, isAdmin, async (req, res) => {
         try {
-            const presentations = await Presentation.find()
+            const recipes = await Recipe.find()
                 .populate('userId', 'email')
                 .sort({ createdAt: -1 });
-            res.json(presentations);
+            res.json(recipes);
         } catch (error) {
-            console.error('Admin presentations fetch error:', error);
+            console.error('Admin recipes fetch error:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     });
 
     app.get(
-        '/api/admin/presentations-model-stats',
+        '/api/admin/recipes-model-stats',
         authenticateToken,
         isAdmin,
         async (req, res) => {
             try {
-                const modelStats = await Presentation.aggregate([
+                const modelStats = await Recipe.aggregate([
                     {
                         $group: {
                             _id: '$model',
@@ -110,7 +110,7 @@ const adminRoutes = (app) => {
                 ]);
                 res.json(modelStats);
             } catch (error) {
-                console.error('Admin presentation model stats error:', error);
+                console.error('Admin recipe model stats error:', error);
                 res.status(500).json({ error: 'Internal server error' });
             }
         }
@@ -122,7 +122,7 @@ const adminRoutes = (app) => {
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
-            await Promise.all([Presentation.deleteMany({ userId: req.params.id })]);
+            await Promise.all([Recipe.deleteMany({ userId: req.params.id })]);
             res.json({ message: 'User and associated data deleted successfully' });
         } catch (error) {
             console.error('Admin user delete error:', error);
@@ -143,15 +143,15 @@ const adminRoutes = (app) => {
         }
     });
 
-    app.delete('/api/admin/presentations/:id', authenticateToken, isAdmin, async (req, res) => {
+    app.delete('/api/admin/recipes/:id', authenticateToken, isAdmin, async (req, res) => {
         try {
-            const presentation = await Presentation.findByIdAndDelete(req.params.id);
-            if (!presentation) {
-                return res.status(404).json({ error: 'Presentation not found' });
+            const recipe = await Recipe.findByIdAndDelete(req.params.id);
+            if (!recipe) {
+                return res.status(404).json({ error: 'Recipe not found' });
             }
-            res.json({ message: 'Presentation deleted successfully' });
+            res.json({ message: 'Recipe deleted successfully' });
         } catch (error) {
-            console.error('Admin presentation delete error:', error);
+            console.error('Admin recipe delete error:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     });
@@ -185,7 +185,7 @@ const adminRoutes = (app) => {
     });
 
     app.put(
-        '/api/admin/presentations/:id/privacy',
+        '/api/admin/recipes/:id/privacy',
         authenticateToken,
         isAdmin,
         async (req, res) => {
@@ -194,15 +194,15 @@ const adminRoutes = (app) => {
                 if (typeof isPrivate !== 'boolean') {
                     return res.status(400).json({ error: 'Invalid private status' });
                 }
-                const presentation = await Presentation.findById(req.params.id);
-                if (!presentation) {
-                    return res.status(404).json({ error: 'Presentation not found' });
+                const recipe = await Recipe.findById(req.params.id);
+                if (!recipe) {
+                    return res.status(404).json({ error: 'Recipe not found' });
                 }
-                presentation['isPrivate'] = isPrivate;
-                await presentation.save();
-                res.json({ message: 'Presentation privacy status updated successfully' });
+                recipe['isPrivate'] = isPrivate;
+                await recipe.save();
+                res.json({ message: 'Recipe privacy status updated successfully' });
             } catch (error) {
-                console.error('Admin presentation privacy update error:', error);
+                console.error('Admin recipe privacy update error:', error);
                 res.status(500).json({ error: 'Internal server error' });
             }
         }
