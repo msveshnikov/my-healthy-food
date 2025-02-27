@@ -1,88 +1,160 @@
-# Boiler
+# My Healthy Food
 
+Platform for generating AI recipes in any language using flash-thinking model via JSON prompt (with
+pre-search) and very nice rendering or recipe + SEO + sharing + unsplash pictures (or google images)
 
 # PROD
 
-https://Boiler.pro
+https://MyHealthy.Food
 
 ## Overview
 
+My Healthy Food is a platform designed to revolutionize recipe discovery and creation. Leveraging
+advanced AI models, it generates recipes in multiple languages based on user prompts, incorporating
+real-time web searches to enhance accuracy and relevance. The platform aims to provide a seamless
+user experience with features ranging from recipe rendering and SEO optimization to social sharing
+and integration with image resources like Unsplash and Google Images.
 
 ## Key Features
 
+- **AI-Powered Recipe Generation:** Utilizes a flash-thinking model to create diverse recipes from
+  user prompts.
+- **Multi-Language Support:** Generates recipes in various languages to cater to a global audience.
+- **Real-time Web Search Integration:** Enhances recipe accuracy and relevance through pre-search
+  functionality.
+- **Rich Recipe Rendering:** Presents recipes with visually appealing layouts, optimized for
+  readability.
+- **SEO Optimization:** Ensures recipes are search engine friendly for broader discoverability.
+- **Social Sharing Capabilities:** Enables users to easily share their generated recipes on social
+  platforms.
+- **Image Integration:** Fetches relevant and appealing images from Unsplash and Google Images to
+  complement recipes.
+- **User Authentication and Management:** Secure user accounts with login, signup, and password
+  recovery features.
+- **User Feedback System:** Allows users to provide feedback, contributing to platform improvement.
+- **Admin Interface:** Dedicated admin panel for system management, user oversight, and content
+  moderation.
 
 ## Project Architecture
 
 - **Root Files:**
 
-    - Configuration & deployment scripts: .prettierrc, copy.cmd, deploy.cmd
-    - Docker configurations: Dockerfile, docker-compose.yml
-    - Core application files: index.html, landing.html, package.json, vite.config.js, rest.http,
-      playground-1.mongodb.js
+    - **Configuration & Deployment:** `.prettierrc`, `copy.cmd`, `deploy.cmd`, `kill.cmd` for
+      development, styling, and deployment processes.
+    - **Dockerization:** `Dockerfile`, `docker-compose.yml` for containerization and environment
+      consistency.
+    - **Core Application:** `index.html`, `landing.html`, `package.json`, `vite.config.js`,
+      `rest.http`, `playground-1.mongodb.js` for entry points, dependencies, build configurations,
+      and API testing.
 
 - **Client (src/):**
 
-    - Main application and layout components: App.jsx, Navbar.jsx, Landing.jsx, main.jsx
-    - User management and feedback: Login.jsx, SignUp.jsx, Forgot.jsx, Reset.jsx, Profile.jsx,
-      Feedback.jsx
-    - Admin interface: Admin.jsx
-    - Informational pages: Privacy.jsx, Terms.jsx
+    - **Core Components:** `App.jsx`, `Navbar.jsx`, `Landing.jsx`, `main.jsx` defining the
+      application structure, navigation, and main entry point.
+    - **User Interface & Navigation:** `BottomNavigationBar.jsx` for enhanced mobile navigation.
+    - **User Management:** `Login.jsx`, `SignUp.jsx`, `Forgot.jsx`, `Reset.jsx`, `Profile.jsx` for
+      user authentication and profile management.
+    - **Feedback & Documentation:** `Feedback.jsx`, `Docs.jsx` for user feedback collection and
+      in-app documentation access.
+    - **Informational Pages:** `Privacy.jsx`, `Terms.jsx` for legal and policy information.
+    - **Admin Panel:** `Admin.jsx` for administrative functionalities.
 
 - **Server (server/):**
 
-    - Authentication & administration: admin.js, middleware/auth.js, user.js
-    - AI and search integrations: claude.js, deepseek.js, gemini.js, openai.js, search.js
-    - Media and image processing: imageService.js
-    - Application entry point and schemata: index.js
-    - Data Models: models/Feedback.js, models/User.js
-    - Server-specific package management: package.json
+    - **Authentication & Administration:** `admin.js`, `middleware/auth.js`, `user.js` for
+      server-side user and admin management with secure authentication middleware.
+    - **AI Integrations:** `claude.js`, `deepseek.js`, `gemini.js`, `grok.js`, `openai.js`
+      integrating multiple AI engines for recipe generation and diverse content processing.
+    - **Search & Image Services:** `search.js`, `imageService.js` for web search integration and
+      image retrieval and processing.
+    - **Data Schemas & Models:** `recipeSchema.json`, `models/Recipe.js`, `models/Feedback.js`,
+      `models/User.js` defining data structures and models for recipes, feedback, and users.
+    - **Utilities & Entry Point:** `utils.js`, `index.js` for utility functions and server
+      application entry point.
+    - **Server Package Management:** `package.json` for server-side dependencies.
 
 - **Public (public/):**
 
-    - Static resources: ads.txt, landing.html, robots.txt
+    - **Static Assets:** `ads.txt`, `landing.html`, `robots.txt` for static resources, landing page,
+      and SEO directives.
 
 - **Documentation (docs/):**
-    - Comprehensive guides and policies: app_description.txt, privacy_policy.html,
-      release_notes.txt, short_description.txt
-    - Branding and marketing assets: landing_page_copy.html, social_media_content.json,
-      keywords.txt, subtitle.txt, title.txt
+    - **Application & Policies:** `app_description.txt`, `privacy_policy.html`, `release_notes.txt`,
+      `short_description.txt` providing application details, policies, and release information.
+    - **Branding & Marketing:** `landing_page_copy.html`, `social_media_content.json`,
+      `keywords.txt`, `subtitle.txt`, `title.txt` for marketing assets and branding consistency.
 
-This organized structure fosters clear separation of concerns, simplifies debugging, adheres to best
-security practices, and supports independent scaling of client, server, and documentation
-components.
+This architecture emphasizes modularity, security, and scalability, allowing for independent
+development and deployment of client, server, and documentation components.
 
 ## Design Ideas & Considerations
 
-- **Modern UI/UX Enhancements:**  
-  Leverage component-driven design to develop responsive, adaptive interfaces across devices,
-  including designated admin and feedback modules.
+- **Modern UI/UX Enhancements:**
 
-- **Enhanced User Management & Security:**  
-  Implement sophisticated authentication flows (Login, SignUp, Forgot/Reset Password) using secure
-  middleware. Ensure data integrity and session protection across both client and server layers.
+    - **Component-Driven Design:** Develop reusable UI components to ensure consistency and
+      accelerate feature development across the platform.
+    - **Responsive and Adaptive Interfaces:** Implement layouts that seamlessly adapt to various
+      screen sizes and devices, including mobile-first considerations and a dedicated mobile
+      navigation via `BottomNavigationBar.jsx`.
+    - **Interactive Recipe Presentation:** Enhance recipe rendering with interactive elements, user
+      customization options, and visually engaging layouts.
+    - **In-App Documentation:** Integrate `Docs.jsx` to provide contextual help and user guides
+      directly within the application.
 
-- **Expanded Admin & Moderation Capabilities:**  
-  Develop a dedicated Admin panel to oversee user feedback, manage system settings, and monitor
-  operational metrics with detailed logging and alerting systems.
+- **Enhanced User Management & Security:**
 
-- **Optimized Backend & Extended AI Integrations:**  
-  Scale backend operations using containerization and consider orchestration tools like Kubernetes.
-  Integrate diverse AI engines (DeepSeek for semantic search, OpenAI for content generation, etc.)
-  to support multi-faceted research and presentation workflows.
+    - **Sophisticated Authentication Flows:** Implement robust authentication processes (Login,
+      SignUp, Forgot/Reset Password) using secure middleware (`middleware/auth.js`).
+    - **Data Integrity and Session Protection:** Ensure secure handling of user data and session
+      management across client and server layers to protect user privacy and application security.
+    - **Role-Based Access Control (RBAC):** Implement RBAC to manage user permissions, particularly
+      for admin functionalities and content moderation within the `Admin.jsx` panel.
 
-- **Resilient Error Handling & Centralized Logging:**  
-  Incorporate proactive error monitoring and centralized logging across both authentication and
-  content-generation processes to detect, diagnose, and resolve issues swiftly.
+- **Expanded Admin & Moderation Capabilities:**
 
-- **Continuous Integration/Delivery & Automated Testing:**  
-  Strengthen development cycles by deploying CI/CD pipelines (using GitHub Actions or GitLab CI).
-  Automate testing for new modules (admin, feedback, auth flows) to ensure robust updates and
-  quality assurance.
+    - **Dedicated Admin Panel (`Admin.jsx`):** Develop a comprehensive admin dashboard to oversee
+      user feedback, manage system settings, monitor operational metrics, and handle content
+      moderation.
+    - **Detailed Logging and Alerting:** Implement robust logging and alerting systems to monitor
+      system health, track user activities, and proactively identify and address potential issues.
+    - **User Feedback Management:** Centralize user feedback management within the admin panel to
+      efficiently review, prioritize, and respond to user input.
 
-- **Enhanced Documentation & Developer Guidelines:**  
-  Maintain comprehensive, version-controlled documentation for application features, API
-  integrations, release notes, and branding guidelines to foster seamless collaboration and future
-  enhancements.
+- **Optimized Backend & Extended AI Integrations:**
 
+    - **Scalable Backend Operations:** Utilize containerization (Docker) and consider orchestration
+      tools (Kubernetes) for scaling backend services to handle increased traffic and computational
+      demands.
+    - **Multi-AI Engine Strategy:** Leverage diverse AI engines (DeepSeek, OpenAI, Gemini, Claude,
+      Grok) for specialized tasks like semantic search, content generation, and language processing
+      to optimize results and provide flexibility.
+    - **Structured Data Management:** Utilize `recipeSchema.json` and `models/Recipe.js` to enforce
+      data consistency and facilitate efficient data handling and API interactions for recipes.
 
-# TODO
+- **Resilient Error Handling & Centralized Logging:**
+
+    - **Proactive Error Monitoring:** Implement comprehensive error monitoring to detect and track
+      errors across authentication, content generation, and other critical processes.
+    - **Centralized Logging:** Aggregate logs from all application components into a centralized
+      logging system for efficient debugging, issue diagnosis, and performance analysis.
+
+- **Continuous Integration/Delivery & Automated Testing:**
+
+    - **CI/CD Pipelines:** Establish CI/CD pipelines (using GitHub Actions or GitLab CI) to automate
+      build, test, and deployment processes, ensuring rapid and reliable software releases.
+    - **Automated Testing:** Implement automated unit, integration, and end-to-end tests for new
+      modules (admin, feedback, auth flows) and core functionalities to maintain software quality
+      and prevent regressions.
+
+- **Enhanced Documentation & Developer Guidelines:**
+    - **Comprehensive Documentation:** Maintain detailed, version-controlled documentation for
+      application features, API integrations, development guidelines, and infrastructure setup.
+    - **API Documentation:** Provide clear and comprehensive API documentation for both internal and
+      potential external integrations.
+    - **Developer Guidelines:** Establish coding standards, contribution guidelines, and
+      architectural documentation to facilitate seamless collaboration and knowledge sharing among
+      developers.
+    - **Release Notes and Changelogs:** Maintain detailed release notes (`release_notes.txt`) to
+      track changes, bug fixes, and new features across different versions of the application.
+
+## TODO
