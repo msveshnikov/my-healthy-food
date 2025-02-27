@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"
+        />
+        <meta
+            name="description"
+            content="Automate your research workflow with AI-powered insights and instant, professional presentation generation."
+        />
+        <title>AutoResearch.pro - AI Research & Presentation Platform</title>
+        <link rel="icon" href="/android-chrome-192x192.png" type="image/png" sizes="192x192" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&family=Roboto:wght@400;700&display=swap"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+        <style>
+            :root {
+                --primary: #3498db;
+                --secondary: #2980b9;
+                --secondary-dark: #2471a3;
+                --accent: #f1c40f;
+                --accent-dark: #e67e22;
+            }
+            body {
+                font-family: 'Open Sans', sans-serif;
+                overscroll-behavior: none;
+            }
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                font-family: 'Montserrat', sans-serif;
+            }
+            .accent-text {
+                font-family: 'Roboto', sans-serif;
+            }
+            .hero {
+                position: relative;
+                background-image:
+                    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('image4.png');
+                background-size: cover;
+                background-position: center;
+                min-height: 100vh;
+            }
+            .feature-card {
+                transition: all 0.3s ease;
+                border-left: 4px solid var(--primary);
+            }
+            .feature-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            }
+            .primary-button {
+                background-color: var(--primary);
+                color: #fff;
+                transition: all 0.3s ease;
+            }
+            .primary-button:hover {
+                background-color: var(--secondary);
+                transform: translateY(-2px);
+            }
+            .testimonial-card {
+                transition: transform 0.3s ease;
+            }
+            .testimonial-card:hover {
+                transform: translateY(-5px);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+            }
+            .feature-icon {
+                background-color: var(--primary);
+                color: white;
+                padding: 1rem;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+            .cta-section {
+                background-image: url('image.jpg');
+                background-size: cover;
+                background-position: center;
+                position: relative;
+            }
+            .cta-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.6);
+            }
+            .pricing-card {
+                transition: all 0.3s ease;
+            }
+            .pricing-card:hover {
+                transform: scale(1.05);
+            }
+            .social-links {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+            .social-links a {
+                color: var(--secondary);
+                text-decoration: none;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+            }
+            .social-links a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+    <body>
+        <section class="hero flex items-center">
+            <div class="container mx-auto px-6 text-center text-white relative z-10">
+                <h1
+                    class="text-4xl md:text-6xl font-bold mb-6 animate__animated animate__fadeInDown"
+                >
+                    AutoResearch
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 animate__animated animate__fadeInUp">
+                    Automate your research workflow with AI-powered insights and instant,
+                    professional presentation generation.
+                </p>
+                <a
+                    href="/presentation"
+                    class="primary-button px-8 py-4 rounded-full text-lg font-semibold animate__animated animate__fadeInUp"
+                >
+                    Get Started
+                </a>
+            </div>
+        </section>
+
+        <section id="features" class="py-20 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-12">Key Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-rocket fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Unlimited Slides</h3>
+                        <p>Create presentations with as many slides as you need, without limits.</p>
+                    </div>
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-file-powerpoint fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Free PPTX Download</h3>
+                        <p>Download your professional presentations in PPTX format, always free.</p>
+                    </div>
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-microphone-alt fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Full Speaker Notes</h3>
+                        <p>
+                            Generate comprehensive speaker notes and even full transcripts for
+                            effortless delivery.
+                        </p>
+                    </div>
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-search fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Deep Web Search</h3>
+                        <p>Access comprehensive research data from across the deep web.</p>
+                    </div>
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-images fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Rich Image Integration</h3>
+                        <p>
+                            Access millions of professional images via Unsplash and Google Images
+                            integration.
+                        </p>
+                    </div>
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-brain fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Vast AI Model Selection</h3>
+                        <p>
+                            Leverage a wide array of AI models including OpenAI, DeepSeek, Claude,
+                            Gemini, and more for diverse research needs.
+                        </p>
+                    </div>
+                    <div class="feature-card p-6 bg-white rounded-lg shadow-md">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-edit fa-2x"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Dynamic Customization</h3>
+                        <p>
+                            Real-time slide modifications with customizable layouts and interactive
+                            previews.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-12">Pricing Plans</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div
+                        class="pricing-card p-6 bg-white rounded-lg shadow-lg border border-gray-200"
+                    >
+                        <h3 class="text-2xl font-bold mb-4">Free</h3>
+                        <p class="text-4xl font-bold mb-6">
+                            $0<span class="text-sm font-normal">/month</span>
+                        </p>
+                        <ul class="mb-8">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Unlimited Slides
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Always Free PPTX
+                                Download
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>3 Presentations/day
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Basic AI Research
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Public Presentations
+                            </li>
+                        </ul>
+                        <a
+                            href="/presentation"
+                            class="primary-button block w-full text-center px-8 py-4 rounded-full"
+                        >
+                            Start Free
+                        </a>
+                    </div>
+                    <div class="pricing-card p-6 bg-white rounded-lg shadow-lg border-primary">
+                        <h3 class="text-2xl font-bold mb-4">Pro</h3>
+                        <p class="text-4xl font-bold mb-6">
+                            $7.99<span class="text-sm font-normal">/month</span>
+                        </p>
+                        <ul class="mb-8">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Unlimited Private
+                                Presentations
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Deep Research
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Custom Templates
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Full Speaker Notes
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Priority Support
+                            </li>
+                        </ul>
+                        <a
+                            href="/profile"
+                            class="primary-button block w-full text-center px-8 py-4 rounded-full"
+                        >
+                            Get Pro
+                        </a>
+                    </div>
+                    <div
+                        class="pricing-card p-6 bg-white rounded-lg shadow-lg border border-gray-200"
+                    >
+                        <h3 class="text-2xl font-bold mb-4">Enterprise</h3>
+                        <p class="text-4xl font-bold mb-6">Custom</p>
+                        <ul class="mb-8">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Unlimited Everything
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Custom AI Training
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>API Access
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>Dedicated Account
+                                Manager
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-green-500 mr-2"></i>24/7 Support
+                            </li>
+                        </ul>
+                        <a
+                            href="mailto:sales@autoresearch.pro"
+                            class="primary-button block w-full text-center px-8 py-4 rounded-full"
+                        >
+                            Contact Sales
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="py-20 bg-gray-100">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-12">What Our Users Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="testimonial-card bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <img
+                                src="user1.jpg"
+                                alt="Alex Johnson"
+                                class="rounded-full w-12 h-12 mr-4"
+                            />
+                            <div>
+                                <h4 class="font-bold">Alex Johnson</h4>
+                                <p class="text-gray-600">Researcher</p>
+                            </div>
+                        </div>
+                        <p>
+                            "AutoResearch.pro has streamlined my research process and revolutionized
+                            how I prepare presentations."
+                        </p>
+                    </div>
+                    <div class="testimonial-card bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <img
+                                src="user2.jpg"
+                                alt="Samantha Lee"
+                                class="rounded-full w-12 h-12 mr-4"
+                            />
+                            <div>
+                                <h4 class="font-bold">Samantha Lee</h4>
+                                <p class="text-gray-600">Data Analyst</p>
+                            </div>
+                        </div>
+                        <p>
+                            "The instant presentation generation feature saves me hours every week.
+                            Highly recommended!"
+                        </p>
+                    </div>
+                    <div class="testimonial-card bg-white rounded-xl p-6 shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <img
+                                src="user3.jpg"
+                                alt="Michael Smith"
+                                class="rounded-full w-12 h-12 mr-4"
+                            />
+                            <div>
+                                <h4 class="font-bold">Michael Smith</h4>
+                                <p class="text-gray-600">Project Manager</p>
+                            </div>
+                        </div>
+                        <p>
+                            "The platform's modular design and AI insights have transformed our
+                            team's workflow."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section py-20 relative">
+            <div class="container mx-auto px-6 text-center relative z-10">
+                <h2 class="text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
+                <p class="text-xl text-white mb-8">
+                    Join thousands of professionals using AutoResearch.pro
+                </p>
+                <a
+                    href="/presentation"
+                    class="primary-button px-8 py-4 rounded-full text-lg font-semibold"
+                >
+                    Try It Now
+                </a>
+            </div>
+        </section>
+
+        <footer class="bg-gray-900 text-white py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <h4 class="text-xl font-bold mb-4">AutoResearch.pro</h4>
+                        <a href="/docs" class="hover:text-secondary transition-colors"
+                            >Documentation</a
+                        >
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-4">Features</h4>
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="#features" class="hover:text-secondary transition-colors"
+                                    >Automated Research</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="/presentation"
+                                    class="hover:text-secondary transition-colors"
+                                    >Instant Generation</a
+                                >
+                            </li>
+                            <li>
+                                <a href="#features" class="hover:text-secondary transition-colors"
+                                    >Dynamic Customization</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-4">Legal</h4>
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="/privacy">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="/terms">Terms of Service</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-4">Connect</h4>
+                        <div class="flex space-x-4">
+                            <a href="https://twitter.com/MangaTVShop" target="_blank">
+                                <i class="fab fa-twitter fa-2x"></i>
+                            </a>
+                            <a href="https://github.com/msveshnikov" target="_blank">
+                                <i class="fab fa-github fa-2x"></i>
+                            </a>
+                        </div>
+                        <br />
+                        <a
+                            href="mailto:support@autoresearch.pro"
+                            class="hover:text-secondary transition-colors"
+                        >
+                            support@autoresearch.pro
+                        </a>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a
+                        href="https://theresanaiforthat.com/ai/autoresearch-pro/?ref=featured&v=2576"
+                        target="_blank"
+                        rel="nofollow"
+                        ><img
+                            width="300"
+                            src="https://media.theresanaiforthat.com/featured-on-taaft.png?width=600"
+                    /></a>
+                </div>
+                <div class="text-center mt-8 pt-8 border-t border-gray-700">
+                    <p class="text-lg">
+                        &copy; 2025 MaxSoft. All rights reserved. Crafted with ❤️ by
+                        <a class="hover:text-indigo-300" href="https://autocode.work/">AutoCode</a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>
