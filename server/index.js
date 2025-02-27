@@ -18,7 +18,7 @@ import { getTextDeepseek } from './deepseek.js';
 import User from './models/User.js';
 import Recipe from './models/Recipe.js';
 import Feedback from './models/Feedback.js';
-// import { imageService } from './imageService.js';
+import { replaceGraphics } from './imageService.js';
 import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
@@ -195,7 +195,7 @@ ${exampleSchema}`;
             console.error(e);
             return res.status(500).json({ error: 'Something went wrong, please try again' });
         }
-        parsed = await imageService(parsed, imageSource);
+        parsed = await replaceGraphics(parsed, imageSource);
 
         const isPrivate =
             (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') &&
