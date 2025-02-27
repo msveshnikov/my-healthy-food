@@ -68,7 +68,7 @@ ChartJS.register(
 const Admin = () => {
     const toast = useToast();
     const cancelRef = useRef();
-    const [stats, setStats] = useState({ stats: {}, userGrowth: [], presentationsStats: {} });
+    const [stats, setStats] = useState({ stats: {}, userGrowth: [], recipesStats: {} });
     const [users, setUsers] = useState([]);
     const [recipes, setRecipes] = useState([]);
     const [feedbacks, setFeedbacks] = useState([]);
@@ -261,19 +261,15 @@ const Admin = () => {
                         />
                     )}
                 </Box>
-                {stats.presentationsStats?.presentationGrowth?.length > 0 && (
+                {stats.recipesStats?.recipeGrowth?.length > 0 && (
                     <Box w="full" h="400px" p={4}>
                         <Line
                             data={{
-                                labels: stats.presentationsStats.presentationGrowth.map(
-                                    (d) => d._id
-                                ),
+                                labels: stats.recipesStats.recipeGrowth.map((d) => d._id),
                                 datasets: [
                                     {
-                                        label: 'Presentation Growth',
-                                        data: stats.presentationsStats.presentationGrowth.map(
-                                            (d) => d.count
-                                        ),
+                                        label: 'Recipe Growth',
+                                        data: stats.recipesStats.recipeGrowth.map((d) => d.count),
                                         borderColor: '#3498DB',
                                         tension: 0.4
                                     }
@@ -303,7 +299,7 @@ const Admin = () => {
                     <Card>
                         <CardBody>
                             <Stat>
-                                <StatLabel>Presentations</StatLabel>
+                                <StatLabel>Recipes</StatLabel>
                                 <StatNumber>{recipes.length}</StatNumber>
                             </Stat>
                         </CardBody>
@@ -439,11 +435,11 @@ const Admin = () => {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {recipes.map((presentation) => (
-                                    <Tr key={presentation._id}>
-                                        <Td>{presentation.title}</Td>
-                                        <Td>{presentation.userId?.email || 'N/A'}</Td>
-                                        <Td>{new Date(presentation.createdAt).toLocaleString()}</Td>
+                                {recipes.map((recipe) => (
+                                    <Tr key={recipe._id}>
+                                        <Td>{recipe.title}</Td>
+                                        <Td>{recipe.userId?.email || 'N/A'}</Td>
+                                        <Td>{new Date(recipe.createdAt).toLocaleString()}</Td>
 
                                         <Td>
                                             <Button
@@ -452,8 +448,8 @@ const Admin = () => {
                                                 leftIcon={<DeleteIcon />}
                                                 onClick={() => {
                                                     setItemToDelete({
-                                                        id: presentation._id,
-                                                        type: 'presentations'
+                                                        id: recipe._id,
+                                                        type: 'recipes'
                                                     });
                                                     setIsDeleteAlertOpen(true);
                                                 }}
