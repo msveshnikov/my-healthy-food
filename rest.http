@@ -1,7 +1,5 @@
-GET https://autoresearch.pro/sitemap.xml
-
-###
 
 GET http://localhost:3000/sitemap.xml
 
 ###
+GET https://MyHealthy.Food/sitemap.xml

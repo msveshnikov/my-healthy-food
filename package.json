@@ -1,6 +1,7 @@
 {
     "name": "my-healthy-food",
     "version": "1.0.0",
+    "description": "Platform for generating AI recipes in any language using flash-thinking model via JSON prompt (with pre-search) and very nice rendering or recipe + SEO + sharing + unsplash pictures (or google images).",
     "private": true,
     "type": "module",
     "scripts": {
@@ -18,25 +19,29 @@
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
         "@react-oauth/google": "^0.12.1",
-        "@sentry/react": "^9.1.0",
-        "@sentry/vite-plugin": "^3.1.2",
+        "@sentry/react": "^9.2.0",
         "react": "^19.0.0",
         "react-chartjs-2": "^5.3.0",
         "react-dom": "^19.0.0",
         "react-ga4": "^2.1.0",
-        "react-icons": "^5.4.0",
-        "react-markdown": "^9.0.3",
-        "react-router-dom": "^7.1.5"
+        "react-icons": "^5.5.0",
+        "react-markdown": "^10.0.0",
+        "react-router-dom": "^7.2.0"
     },
     "devDependencies": {
         "@vitejs/plugin-react": "^4.3.4",
-        "eslint": "^9.20.1",
-        "eslint-config-prettier": "^10.0.1",
+        "eslint": "^9.21.0",
+        "eslint-config-prettier": "^10.0.2",
         "eslint-plugin-react": "^7.37.4",
         "eslint-plugin-react-hooks": "^5.1.0",
         "eslint-plugin-react-refresh": "^0.4.19",
-        "prettier": "^3.5.1",
-        "vite": "^6.1.0",
-        "vite-plugin-pwa": "^0.21.1"
+        "prettier": "^3.5.2",
+        "vite": "^6.2.0",
+        "vite-plugin-pwa": "^0.21.1",
+        "nodemon": "^3.1.9",
+        "@sentry/vite-plugin": "^3.2.1"
+    },
+    "engines": {
+        "node": ">=18.0.0"
     }
 }
