@@ -26,7 +26,7 @@ export const UserContext = createContext(null);
 const theme = extendTheme({
     colors: {
         primary: {
-            500: '#3498DB'
+            500: '#68b984'
         },
         secondary: {
             500: '#2980B9',
@@ -85,10 +85,7 @@ function App() {
                                         <Routes>
                                             <Route path="/" element={<Landing />} />
                                             <Route path="/recipes" element={<RecipeList />} />
-                                            <Route
-                                                path="/recipes/create"
-                                                element={<RecipeCreator />}
-                                            />
+                                            <Route path="/create" element={<RecipeCreator />} />
                                             <Route path="/recipe/:slug" element={<Recipe />} />
 
                                             <Route path="/privacy" element={<Privacy />} />

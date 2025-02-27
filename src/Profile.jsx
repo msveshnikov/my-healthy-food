@@ -7,16 +7,12 @@ import {
     Input,
     VStack,
     Heading,
-    Text,
     useToast,
     Select,
     Container,
     Card,
     CardBody,
-    SimpleGrid,
-    Stack,
-    Badge,
-    Link
+    SimpleGrid
 } from '@chakra-ui/react';
 import { API_URL, UserContext } from './App';
 import RecipeList from './RecipeList';
@@ -94,7 +90,7 @@ const Profile = () => {
             <Card>
                 <CardBody>
                     <VStack spacing={8}>
-                        <Box w="100%">
+                        {/* <Box w="100%">
                             <Stack direction="row" justify="space-between" align="center" mb={4}>
                                 <Text fontSize="xl">Subscription</Text>
                                 <Badge
@@ -134,7 +130,7 @@ const Profile = () => {
                                     </Button>
                                 </Link>
                             )}
-                        </Box>
+                        </Box> */}
                         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
                             <VStack spacing={6} align="stretch">
                                 <Heading size="md">Basic Information</Heading>

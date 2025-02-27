@@ -160,18 +160,17 @@ const slugify = (text) => {
         .replace(/--+/g, '-');
 };
 
-app.post('/api/generate-recipe', authenticateToken, checkAiLimit, async (req, res) => {
+app.post('/api/generate-recipe', async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
         console.log(prompt, language, model, temperature, deepResearch, imageSource);
         prompt = prompt?.substring(0, 1000);
         language = language || 'en';
-        model = model || 'o3-mini';
+        model = model || 'gemini-2.0-flash-thinking-exp-01-21';
         temperature = temperature || 0.7;
         imageSource = imageSource || 'unsplash';
         deepResearch = deepResearch === true || deepResearch === 'true';
 
-        const user = await User.findById(req?.user?.id);
         const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
 
         const webSearchContent = await fetchSearchResults(prompt);
@@ -206,10 +205,6 @@ ${exampleSchema}`;
             parsed.description = parsed.recipeData.description;
         }
 
-        const isPrivate =
-            (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') &&
-            !user.isAdmin;
-
         const recipe = new Recipe({
             title: parsed.title || prompt,
             description: parsed.description,
@@ -217,8 +212,7 @@ ${exampleSchema}`;
             model,
             recipeData: parsed,
             slug: slugify(parsed.title || prompt),
-            userId: req?.user?.id,
-            isPrivate
+            userId: req?.user?.id
         });
 
         await recipe.save();

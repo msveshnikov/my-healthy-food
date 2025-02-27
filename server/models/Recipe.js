@@ -99,10 +99,6 @@ const RecipeSchema = new mongoose.Schema(
         },
         seoDescription: {
             type: String
-        },
-        isPublic: {
-            type: Boolean,
-            default: true
         }
     },
     {

@@ -21,7 +21,7 @@ import { API_URL } from './App';
 import { CopyIcon } from '@chakra-ui/icons';
 
 const Recipe = () => {
-    const { identifier } = useParams();
+    const { slug } = useParams();
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ const Recipe = () => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`${API_URL}/api/recipes/${identifier}`);
+                const response = await fetch(`${API_URL}/api/recipes/${slug}`);
                 if (!response.ok) {
                     if (response.status === 404) {
                         setError('Recipe not found');
@@ -51,7 +51,7 @@ const Recipe = () => {
         };
 
         fetchRecipe();
-    }, [identifier]);
+    }, [slug]);
 
     const handleCopyToClipboard = async (text) => {
         try {

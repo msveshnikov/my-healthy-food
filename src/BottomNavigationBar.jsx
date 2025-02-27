@@ -1,6 +1,6 @@
 import { Box, Icon, Text } from '@chakra-ui/react';
 import { Link, useLocation } from 'react-router-dom';
-import { FiHome, FiEdit, FiUser } from 'react-icons/fi';
+import { FiHome, FiEdit, FiCoffee } from 'react-icons/fi';
 
 export const BottomNavigationBar = () => {
     const location = useLocation();
@@ -12,14 +12,14 @@ export const BottomNavigationBar = () => {
             label: 'Home'
         },
         {
-            path: '/recipe/create',
+            path: '/create',
             icon: FiEdit,
             label: 'Create'
         },
         {
-            path: '/profile',
-            icon: FiUser,
-            label: 'Profile'
+            path: '/recipes',
+            icon: FiCoffee,
+            label: 'Recipes'
         }
     ];
 

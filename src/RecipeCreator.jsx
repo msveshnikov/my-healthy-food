@@ -33,7 +33,7 @@ const RecipeCreator = () => {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ prompt, language })
+                body: JSON.stringify({ prompt, language, deepResearch: true })
             });
 
             if (!response.ok) {
