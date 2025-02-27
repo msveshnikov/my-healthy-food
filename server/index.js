@@ -18,7 +18,7 @@ import { getTextDeepseek } from './deepseek.js';
 import User from './models/User.js';
 import Recipe from './models/Recipe.js';
 import Feedback from './models/Feedback.js';
-import { imageService } from './imageService.js';
+// import { imageService } from './imageService.js';
 import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
@@ -122,7 +122,7 @@ export const checkAiLimit = async (req, res, next) => {
             if (user.lastAiRequestTime) {
                 const lastRequest = new Date(user.lastAiRequestTime);
                 if (now.toDateString() === lastRequest.toDateString()) {
-                    if (user.aiRequestCount >= 3) {
+                    if (user.aiRequestCount >= 13) {
                         return res
                             .status(429)
                             .json({ error: 'Daily recipe limit reached, please upgrade' });
@@ -160,7 +160,7 @@ const slugify = (text) => {
         .replace(/--+/g, '-');
 };
 
-app.post('/api/generate-recipe', authenticateToken, checkAiLimit, async (req, res) => {
+app.post('/api/generate-recipe',  checkAiLimit, async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
         console.log(prompt, language, model, temperature, deepResearch, imageSource);
@@ -169,7 +169,7 @@ app.post('/api/generate-recipe', authenticateToken, checkAiLimit, async (req, re
         model = model || 'o3-mini';
         temperature = temperature || 0.7;
 
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req?.user?.id);
         const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
 
         const webSearchContent = await fetchSearchResults(prompt);
@@ -208,7 +208,7 @@ ${exampleSchema}`;
             model,
             recipeData: parsed,
             slug: slugify(parsed.title || prompt),
-            userId: req.user.id,
+            userId: req?.user?.id,
             isPrivate
         });
 
@@ -453,9 +453,8 @@ app.get('/sitemap.xml', async (req, res) => {
         const recipes = await Recipe.find();
         const staticRoutes = [
             '/',
-            '/research',
             '/recipe',
-            '/insights',
+            '/recipes',
             '/privacy',
             '/terms',
             '/login',

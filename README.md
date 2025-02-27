@@ -103,15 +103,6 @@ development and deployment of client, server, and documentation components.
     - **In-App Documentation:** Integrate `Docs.jsx` to provide contextual help and user guides
       directly within the application.
 
-- **Enhanced User Management & Security:**
-
-    - **Sophisticated Authentication Flows:** Implement robust authentication processes (Login,
-      SignUp, Forgot/Reset Password) using secure middleware (`middleware/auth.js`).
-    - **Data Integrity and Session Protection:** Ensure secure handling of user data and session
-      management across client and server layers to protect user privacy and application security.
-    - **Role-Based Access Control (RBAC):** Implement RBAC to manage user permissions, particularly
-      for admin functionalities and content moderation within the `Admin.jsx` panel.
-
 - **Expanded Admin & Moderation Capabilities:**
 
     - **Dedicated Admin Panel (`Admin.jsx`):** Develop a comprehensive admin dashboard to oversee
@@ -133,30 +124,9 @@ development and deployment of client, server, and documentation components.
     - **Structured Data Management:** Utilize `recipeSchema.json` and `models/Recipe.js` to enforce
       data consistency and facilitate efficient data handling and API interactions for recipes.
 
-- **Resilient Error Handling & Centralized Logging:**
-
-    - **Proactive Error Monitoring:** Implement comprehensive error monitoring to detect and track
-      errors across authentication, content generation, and other critical processes.
-    - **Centralized Logging:** Aggregate logs from all application components into a centralized
-      logging system for efficient debugging, issue diagnosis, and performance analysis.
-
 - **Continuous Integration/Delivery & Automated Testing:**
 
     - **CI/CD Pipelines:** Establish CI/CD pipelines (using GitHub Actions or GitLab CI) to automate
       build, test, and deployment processes, ensuring rapid and reliable software releases.
-    - **Automated Testing:** Implement automated unit, integration, and end-to-end tests for new
-      modules (admin, feedback, auth flows) and core functionalities to maintain software quality
-      and prevent regressions.
-
-- **Enhanced Documentation & Developer Guidelines:**
-    - **Comprehensive Documentation:** Maintain detailed, version-controlled documentation for
-      application features, API integrations, development guidelines, and infrastructure setup.
-    - **API Documentation:** Provide clear and comprehensive API documentation for both internal and
-      potential external integrations.
-    - **Developer Guidelines:** Establish coding standards, contribution guidelines, and
-      architectural documentation to facilitate seamless collaboration and knowledge sharing among
-      developers.
-    - **Release Notes and Changelogs:** Maintain detailed release notes (`release_notes.txt`) to
-      track changes, bug fixes, and new features across different versions of the application.
 
 ## TODO
