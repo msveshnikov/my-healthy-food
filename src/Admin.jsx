@@ -70,7 +70,7 @@ const Admin = () => {
     const cancelRef = useRef();
     const [stats, setStats] = useState({ stats: {}, userGrowth: [], presentationsStats: {} });
     const [users, setUsers] = useState([]);
-    const [presentations, setPresentations] = useState([]);
+    const [recipes, setRecipes] = useState([]);
     const [feedbacks, setFeedbacks] = useState([]);
     const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState({ id: null, type: null });
@@ -81,29 +81,29 @@ const Admin = () => {
         try {
             setIsLoading(true);
             const token = localStorage.getItem('token');
-            const [dashboardRes, usersRes, presentationsRes, feedbacksRes] = await Promise.all([
+            const [dashboardRes, usersRes, recipesRes, feedbacksRes] = await Promise.all([
                 fetch(`${API_URL}/api/admin/dashboard`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
                 fetch(`${API_URL}/api/admin/users`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                fetch(`${API_URL}/api/admin/presentations`, {
+                fetch(`${API_URL}/api/admin/recipes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
                 fetch(`${API_URL}/api/admin/feedbacks`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
             ]);
-            const [dashboardData, usersData, presentationsData, feedbacksData] = await Promise.all([
+            const [dashboardData, usersData, recipesData, feedbacksData] = await Promise.all([
                 dashboardRes.json(),
                 usersRes.json(),
-                presentationsRes.json(),
+                recipesRes.json(),
                 feedbacksRes.json()
             ]);
             setStats(dashboardData);
             setUsers(usersData);
-            setPresentations(presentationsData);
+            setRecipes(recipesData);
             setFeedbacks(feedbacksData);
         } catch {
             toast({
@@ -194,53 +194,9 @@ const Admin = () => {
         [toast]
     );
 
-    const handlePrivacyChange = useCallback(
-        async (presentationId, newPrivacy) => {
-            try {
-                setIsLoading(true);
-                const token = localStorage.getItem('token');
-                const response = await fetch(
-                    `${API_URL}/api/admin/presentations/${presentationId}/privacy`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ isPrivate: newPrivacy })
-                    }
-                );
-                if (!response.ok) throw new Error();
-                toast({
-                    title: 'Success',
-                    description: 'Presentation privacy updated successfully.',
-                    status: 'success',
-                    duration: 2000,
-                    isClosable: true
-                });
-                setPresentations((prevPresentations) =>
-                    prevPresentations.map((p) =>
-                        p._id === presentationId ? { ...p, isPrivate: newPrivacy } : p
-                    )
-                );
-            } catch {
-                toast({
-                    title: 'Error',
-                    description: 'Failed to update presentation privacy.',
-                    status: 'error',
-                    duration: 2000,
-                    isClosable: true
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        [toast]
-    );
-
     const renderOverviewTab = useCallback(() => {
         const modelCounts = {};
-        presentations.forEach((p) => {
+        recipes.forEach((p) => {
             const key = p.model || 'Unknown';
             modelCounts[key] = (modelCounts[key] || 0) + 1;
         });
@@ -348,14 +304,14 @@ const Admin = () => {
                         <CardBody>
                             <Stat>
                                 <StatLabel>Presentations</StatLabel>
-                                <StatNumber>{presentations.length}</StatNumber>
+                                <StatNumber>{recipes.length}</StatNumber>
                             </Stat>
                         </CardBody>
                     </Card>
                 </SimpleGrid>
             </VStack>
         );
-    }, [stats, presentations]);
+    }, [stats, recipes]);
 
     if (isLoading && !users.length) {
         return (
@@ -377,7 +333,7 @@ const Admin = () => {
                 <TabList>
                     <Tab>Over</Tab>
                     <Tab>Usrs</Tab>
-                    <Tab>Pres</Tab>
+                    <Tab>Recipes</Tab>
                     <Tab>Feed</Tab>
                 </TabList>
                 <TabPanels>
@@ -478,29 +434,17 @@ const Admin = () => {
                                     <Th>Title</Th>
                                     <Th>User</Th>
                                     <Th>Date</Th>
-                                    <Th>Private</Th>
+
                                     <Th>Actions</Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {presentations.map((presentation) => (
+                                {recipes.map((presentation) => (
                                     <Tr key={presentation._id}>
                                         <Td>{presentation.title}</Td>
                                         <Td>{presentation.userId?.email || 'N/A'}</Td>
                                         <Td>{new Date(presentation.createdAt).toLocaleString()}</Td>
-                                        <Td>
-                                            <Switch
-                                                size="sm"
-                                                colorScheme="blue"
-                                                isChecked={presentation.isPrivate}
-                                                onChange={(e) =>
-                                                    handlePrivacyChange(
-                                                        presentation._id,
-                                                        e.target.checked
-                                                    )
-                                                }
-                                            />
-                                        </Td>
+
                                         <Td>
                                             <Button
                                                 colorScheme="red"

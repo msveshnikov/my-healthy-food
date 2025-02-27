@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* global use, db */
 
-use('auto');
+use('myhealthy');
 
 db.users.updateOne(
     { email: 'msveshnikov@gmail.com' },
