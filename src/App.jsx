@@ -12,12 +12,15 @@ import Forgot from './Forgot';
 import Reset from './Reset';
 import Profile from './Profile';
 import { BottomNavigationBar } from './BottomNavigationBar';
+import RecipeList from './RecipeList';
+import RecipeCreator from './RecipeCreator';
+import Recipe from './Recipe';
 
 const Admin = lazy(() => import('./Admin'));
 const Feedback = lazy(() => import('./Feedback'));
 const Docs = lazy(() => import('./Docs'));
 
-export const API_URL = import.meta.env.DEV ? 'http://localhost:3000' : 'https://autoresearch.pro';
+export const API_URL = import.meta.env.DEV ? 'http://localhost:3000' : 'https://myhealthy.food';
 export const UserContext = createContext(null);
 
 const theme = extendTheme({
@@ -81,7 +84,12 @@ function App() {
                                     <VStack spacing={8}>
                                         <Routes>
                                             <Route path="/" element={<Landing />} />
-                                            <Route path="/research" element={<Landing />} />
+                                            <Route path="/recipes" element={<RecipeList />} />
+                                            <Route
+                                                path="/recipes/create"
+                                                element={<RecipeCreator />}
+                                            />
+                                            <Route path="/recipe/:slug" element={<Recipe />} />
 
                                             <Route path="/privacy" element={<Privacy />} />
                                             <Route path="/terms" element={<Terms />} />

@@ -3,6 +3,8 @@
 Platform for generating AI recipes in any language using flash-thinking model via JSON prompt (with
 pre-search) and very nice rendering or recipe + SEO + sharing + unsplash pictures (or google images)
 
+![alt text](public/image.jpg)
+
 # PROD
 
 https://MyHealthy.Food
