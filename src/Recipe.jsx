@@ -102,27 +102,25 @@ const Recipe = () => {
             <Box>
                 <Flex justify="space-between" alignItems="center" mb={4}>
                     <Heading as="h1" size="2xl">
-                        {recipe.recipeData?.title || recipe.title}
+                        {recipe.title}
                     </Heading>
                     <IconButton
                         aria-label="Copy Recipe"
                         icon={<CopyIcon />}
-                        onClick={() =>
-                            handleCopyToClipboard(JSON.stringify(recipe.recipeData, null, 2))
-                        }
+                        onClick={() => handleCopyToClipboard(JSON.stringify(recipe, null, 2))}
                         size="md"
                     />
                 </Flex>
-                {recipe.recipeData?.seoDescription && (
+                {recipe.description && (
                     <Text fontSize="md" color="gray.600" mb={5}>
-                        {recipe.recipeData?.seoDescription}
+                        {recipe.description}
                     </Text>
                 )}
-                {recipe.recipeData?.images && recipe.recipeData.images.length > 0 && (
+                {recipe.imageUrl && (
                     <Box mb={5}>
                         <Image
-                            src={recipe.recipeData.images[0]}
-                            alt={recipe.recipeData?.title || recipe.title}
+                            src={recipe.imageUrl}
+                            alt={recipe.title}
                             borderRadius="md"
                             width="100%"
                             maxHeight="500px"
@@ -137,101 +135,72 @@ const Recipe = () => {
                     <Heading as="h2" size="xl" mb={3}>
                         Description
                     </Heading>
-                    <Text fontSize="lg">{recipe.recipeData?.description}</Text>
+                    <Text fontSize="lg">{recipe.description}</Text>
                 </Box>
 
-                {recipe.recipeData?.prepTime ||
-                    recipe.recipeData?.cookTime ||
-                    recipe.recipeData?.totalTime ||
-                    recipe.recipeData?.servings ||
-                    recipe.recipeData?.cuisine ||
-                    recipe.recipeData?.dishType ||
-                    recipe.recipeData?.mealType ||
-                    recipe.recipeData?.calories ||
-                    (recipe.recipeData?.dietaryRestrictions &&
-                        recipe.recipeData.dietaryRestrictions.length > 0 && (
-                            <Box mb={5}>
-                                <Heading as="h2" size="xl" mb={3}>
-                                    Details
-                                </Heading>
-                                <Wrap spacing="2" mt={2}>
-                                    {recipe.recipeData?.prepTime && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Prep Time: {recipe.recipeData.prepTime}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.cookTime && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Cook Time: {recipe.recipeData.cookTime}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.totalTime && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Total Time: {recipe.recipeData.totalTime}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.servings && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Servings: {recipe.recipeData.servings}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.cuisine && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Cuisine: {recipe.recipeData.cuisine}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.dishType && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Dish Type: {recipe.recipeData.dishType}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.mealType && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Meal Type: {recipe.recipeData.mealType}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.calories && (
-                                        <WrapItem>
-                                            <Tag colorScheme="blue">
-                                                Calories: {recipe.recipeData.calories}
-                                            </Tag>
-                                        </WrapItem>
-                                    )}
-                                    {recipe.recipeData?.dietaryRestrictions &&
-                                        recipe.recipeData.dietaryRestrictions.map(
-                                            (restriction, index) => (
-                                                <WrapItem key={index}>
-                                                    <Tag colorScheme="blue">{restriction}</Tag>
-                                                </WrapItem>
-                                            )
-                                        )}
-                                </Wrap>
-                            </Box>
-                        ))}
+                {recipe.prepTime ||
+                recipe.cookTime ||
+                recipe.totalTime ||
+                recipe.servings ||
+                recipe.cuisine ||
+                recipe.category ||
+                recipe.dietaryRestrictions?.length > 0 ? (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Details
+                        </Heading>
+                        <Wrap spacing="2" mt={2}>
+                            {recipe.prepTime && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Prep Time: {recipe.prepTime}</Tag>
+                                </WrapItem>
+                            )}
+                            {recipe.cookTime && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Cook Time: {recipe.cookTime}</Tag>
+                                </WrapItem>
+                            )}
+                            {recipe.totalTime && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Total Time: {recipe.totalTime}</Tag>
+                                </WrapItem>
+                            )}
+                            {recipe.servings && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Servings: {recipe.servings}</Tag>
+                                </WrapItem>
+                            )}
+                            {recipe.cuisine && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Cuisine: {recipe.cuisine}</Tag>
+                                </WrapItem>
+                            )}
+                            {recipe.category && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Category: {recipe.category}</Tag>
+                                </WrapItem>
+                            )}
+                            {recipe.dietaryRestrictions &&
+                                recipe.dietaryRestrictions.map((restriction, index) => (
+                                    <WrapItem key={index}>
+                                        <Tag colorScheme="blue">{restriction}</Tag>
+                                    </WrapItem>
+                                ))}
+                        </Wrap>
+                    </Box>
+                ) : null}
 
                 <Box mb={5}>
                     <Heading as="h2" size="xl" mb={3}>
                         Ingredients
                     </Heading>
                     <List spacing={3}>
-                        {recipe.recipeData?.ingredients &&
-                            recipe.recipeData.ingredients.map((ingredient, index) => (
+                        {recipe.ingredients &&
+                            recipe.ingredients.map((ingredient, index) => (
                                 <ListItem key={index} fontSize="lg">
-                                    {ingredient}
+                                    {ingredient.quantity && ingredient.unit
+                                        ? `${ingredient.quantity} ${ingredient.unit} ${ingredient.name}`
+                                        : ingredient.name}
                                 </ListItem>
                             ))}
                     </List>
@@ -242,8 +211,8 @@ const Recipe = () => {
                         Instructions
                     </Heading>
                     <List spacing={5} as="ol">
-                        {recipe.recipeData?.instructions &&
-                            recipe.recipeData.instructions.map((instruction, index) => (
+                        {recipe.instructions &&
+                            recipe.instructions.map((instruction, index) => (
                                 <ListItem key={index} fontSize="lg">
                                     {instruction}
                                 </ListItem>

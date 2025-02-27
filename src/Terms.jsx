@@ -165,10 +165,10 @@ const Terms = () => {
                     <Text mb={4}>
                         You agree to indemnify, defend, and hold harmless My Healthy Food, its
                         affiliates, officers, directors, employees, and agents from any claims,
-                        damages, liabilities, costs, or expenses (including reasonable attorneys'
-                        fees) arising from or related to your use of the platform, your recipes
-                        created or accessed through the platform, your user content, or your
-                        violation of these Terms.
+                        damages, liabilities, costs, or expenses (including reasonable
+                        attorneys&apos; fees) arising from or related to your use of the platform,
+                        your recipes created or accessed through the platform, your user content, or
+                        your violation of these Terms.
                     </Text>
                 </Box>
 

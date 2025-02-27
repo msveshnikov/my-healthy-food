@@ -16,7 +16,11 @@ import {
     List,
     ListItem,
     Image,
-    Flex
+    Flex,
+    Divider,
+    Tag,
+    Wrap,
+    WrapItem
 } from '@chakra-ui/react';
 import { API_URL } from './App';
 
@@ -139,28 +143,16 @@ const RecipeCreator = () => {
 
                     <Grid templateColumns={{ base: '1fr', md: '1fr 2fr' }} gap={6}>
                         <GridItem>
-                            {recipe.images && recipe.images.length > 0 && (
+                            {recipe.imageUrl && (
                                 <Box mb={4}>
-                                    <Heading as="h4" size="md" mb={2}>
-                                        Images
-                                    </Heading>
-                                    <Box display="flex" flexDirection="column" alignItems="center">
-                                        {recipe.images.map((image, index) => (
-                                            <Box
-                                                key={index}
-                                                mb={2}
-                                                borderRadius="md"
-                                                overflow="hidden"
-                                            >
-                                                <Image
-                                                    src={image}
-                                                    alt={`Recipe image ${index}`}
-                                                    maxWidth="100%"
-                                                    maxHeight="200px"
-                                                    objectFit="cover"
-                                                />
-                                            </Box>
-                                        ))}
+                                    <Box mb={2} borderRadius="md" overflow="hidden">
+                                        <Image
+                                            src={recipe.imageUrl}
+                                            alt={recipe.title}
+                                            maxWidth="100%"
+                                            maxHeight="300px"
+                                            objectFit="cover"
+                                        />
                                     </Box>
                                 </Box>
                             )}
@@ -172,41 +164,53 @@ const RecipeCreator = () => {
                                 </Text>
                             )}
 
-                            <Flex direction={{ base: 'column', md: 'row' }} mb={4} wrap="wrap">
-                                {recipe.cuisine && (
-                                    <Text mr={4} fontWeight="bold">
-                                        Cuisine: <Text fontWeight="normal">{recipe.cuisine}</Text>
-                                    </Text>
-                                )}
-                                {recipe.category && (
-                                    <Text mr={4} fontWeight="bold">
-                                        Category: <Text fontWeight="normal">{recipe.category}</Text>
-                                    </Text>
-                                )}
-                                {recipe.prepTime && (
-                                    <Text mr={4} fontWeight="bold">
-                                        Prep Time:{' '}
-                                        <Text fontWeight="normal">{recipe.prepTime}</Text>
-                                    </Text>
-                                )}
-                                {recipe.cookTime && (
-                                    <Text mr={4} fontWeight="bold">
-                                        Cook Time:{' '}
-                                        <Text fontWeight="normal">{recipe.cookTime}</Text>
-                                    </Text>
-                                )}
-                                {recipe.totalTime && (
-                                    <Text mr={4} fontWeight="bold">
-                                        Total Time:{' '}
-                                        <Text fontWeight="normal">{recipe.totalTime}</Text>
-                                    </Text>
-                                )}
-                                {recipe.servings && (
-                                    <Text mr={4} fontWeight="bold">
-                                        Servings: <Text fontWeight="normal">{recipe.servings}</Text>
-                                    </Text>
-                                )}
+                            <Flex direction="column" mb={4}>
+                                <Wrap spacing="2" mb={2}>
+                                    {recipe.cuisine && (
+                                        <WrapItem>
+                                            <Tag colorScheme="gray">Cuisine: {recipe.cuisine}</Tag>
+                                        </WrapItem>
+                                    )}
+                                    {recipe.category && (
+                                        <WrapItem>
+                                            <Tag colorScheme="gray">
+                                                Category: {recipe.category}
+                                            </Tag>
+                                        </WrapItem>
+                                    )}
+                                </Wrap>
+                                <Wrap spacing="2">
+                                    {recipe.prepTime && (
+                                        <WrapItem>
+                                            <Tag colorScheme="gray">
+                                                Prep Time: {recipe.prepTime}
+                                            </Tag>
+                                        </WrapItem>
+                                    )}
+                                    {recipe.cookTime && (
+                                        <WrapItem>
+                                            <Tag colorScheme="gray">
+                                                Cook Time: {recipe.cookTime}
+                                            </Tag>
+                                        </WrapItem>
+                                    )}
+                                    {recipe.totalTime && (
+                                        <WrapItem>
+                                            <Tag colorScheme="gray">
+                                                Total Time: {recipe.totalTime}
+                                            </Tag>
+                                        </WrapItem>
+                                    )}
+                                    {recipe.servings && (
+                                        <WrapItem>
+                                            <Tag colorScheme="gray">
+                                                Servings: {recipe.servings}
+                                            </Tag>
+                                        </WrapItem>
+                                    )}
+                                </Wrap>
                             </Flex>
+                            <Divider mb={4} />
 
                             {recipe.ingredients && recipe.ingredients.length > 0 && (
                                 <Box mb={6}>
@@ -215,11 +219,16 @@ const RecipeCreator = () => {
                                     </Heading>
                                     <List spacing={2}>
                                         {recipe.ingredients.map((ingredient, index) => (
-                                            <ListItem key={index}>{ingredient}</ListItem>
+                                            <ListItem key={index}>
+                                                {ingredient.quantity && `${ingredient.quantity} `}
+                                                {ingredient.unit && `${ingredient.unit} `}
+                                                {ingredient.name}
+                                            </ListItem>
                                         ))}
                                     </List>
                                 </Box>
                             )}
+                            <Divider mb={4} />
 
                             {recipe.instructions && recipe.instructions.length > 0 && (
                                 <Box>

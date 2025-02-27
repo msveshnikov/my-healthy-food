@@ -165,7 +165,7 @@ const Privacy = () => {
                     <Text mb={4}>
                         We may update this Privacy Policy from time to time. We will notify you of
                         any significant changes by posting the new policy on our platform and
-                        updating the "Last Updated" date.
+                        updating the &quot;Last Updated&quot; date.
                     </Text>
                 </Box>
                 <Box>
