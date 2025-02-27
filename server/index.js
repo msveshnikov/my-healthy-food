@@ -18,7 +18,7 @@ import { getTextDeepseek } from './deepseek.js';
 import User from './models/User.js';
 import Recipe from './models/Recipe.js';
 import Feedback from './models/Feedback.js';
-import { replaceGraphics } from './imageService.js';
+import { replaceRecipeImages } from './imageService.js';
 import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
@@ -160,7 +160,7 @@ const slugify = (text) => {
         .replace(/--+/g, '-');
 };
 
-app.post('/api/generate-recipe',  checkAiLimit, async (req, res) => {
+app.post('/api/generate-recipe', authenticateToken, checkAiLimit, async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
         console.log(prompt, language, model, temperature, deepResearch, imageSource);
@@ -168,6 +168,8 @@ app.post('/api/generate-recipe',  checkAiLimit, async (req, res) => {
         language = language || 'en';
         model = model || 'o3-mini';
         temperature = temperature || 0.7;
+        imageSource = imageSource || 'unsplash';
+        deepResearch = deepResearch === true || deepResearch === 'true';
 
         const user = await User.findById(req?.user?.id);
         const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
@@ -180,10 +182,10 @@ app.post('/api/generate-recipe',  checkAiLimit, async (req, res) => {
 
         let aiPrompt = `Generate a recipe based on the following prompt: "${prompt}".
 Generate recipe in "${language}" language.
-Research the web and think about the topic before generating. Web search results
+Research the web and think about the topic before generating if web search results are provided.
 <web_search_results>${JSON.stringify(webSearchContent)}</web_search_results>
 <web_content>${webContent}</web_content>
-Format the result as a JSON object representing the recipe.
+Format the result as a JSON object representing the recipe based on schema.
 Use the following example schema as a reference for recipe structure:
 ${exampleSchema}`;
 
@@ -195,7 +197,14 @@ ${exampleSchema}`;
             console.error(e);
             return res.status(500).json({ error: 'Something went wrong, please try again' });
         }
-        parsed = await replaceGraphics(parsed, imageSource);
+
+        parsed = await replaceRecipeImages(parsed, imageSource);
+        if (parsed && parsed.title === undefined && parsed.recipeData?.title) {
+            parsed.title = parsed.recipeData.title;
+        }
+        if (parsed && parsed.description === undefined && parsed.recipeData?.description) {
+            parsed.description = parsed.recipeData.description;
+        }
 
         const isPrivate =
             (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') &&
@@ -214,7 +223,7 @@ ${exampleSchema}`;
 
         await recipe.save();
 
-        res.status(201).json(parsed);
+        res.status(201).json(recipe);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
@@ -224,7 +233,7 @@ ${exampleSchema}`;
 app.get('/api/recipes', async (req, res) => {
     try {
         const search = req.query.search;
-        let filter = { $or: [{ isPrivate: false }, { isPrivate: { $exists: false } }] };
+        let filter = { isPrivate: { $ne: true } };
         if (search) {
             filter = {
                 $and: [

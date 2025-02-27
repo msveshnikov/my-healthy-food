@@ -85,7 +85,7 @@ export const getGoogleImage = async (prompt) => {
         const images = await googleImages(prompt, 'en');
         const randomImage = images[Math.floor(Math.random() * images.length)];
         if (!randomImage?.image) {
-            return { url: null, credits: [] };
+            return null;
         }
         return randomImage.image;
     } catch (e) {
@@ -94,23 +94,75 @@ export const getGoogleImage = async (prompt) => {
     }
 };
 
-export const replaceGraphics = async (presentation, imageSource) => {
-    if (presentation && Array.isArray(presentation.slides)) {
-        for (const slide of presentation.slides) {
-            if (Array.isArray(slide.elements)) {
-                for (const element of slide.elements) {
-                    if (element.type === 'graphic' || element.type === 'image') {
-                        const imageUrl =
-                            imageSource !== 'google'
-                                ? await getUnsplashImage(element.content)
-                                : await getGoogleImage(element.content);
-                        if (imageUrl) {
-                            element.content = imageUrl;
-                        }
+export const replaceRecipeImages = async (recipe, imageSource) => {
+    if (recipe) {
+        if (recipe.images && Array.isArray(recipe.images)) {
+            for (let i = 0; i < recipe.images.length; i++) {
+                if (typeof recipe.images[i] === 'string') {
+                    const imageUrl =
+                        imageSource !== 'google'
+                            ? await getUnsplashImage(recipe.images[i])
+                            : await getGoogleImage(recipe.images[i]);
+                    if (imageUrl) {
+                        recipe.images[i] = imageUrl;
                     }
                 }
             }
         }
+        if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
+            for (let i = 0; i < recipe.ingredients.length; i++) {
+                if (
+                    typeof recipe.ingredients[i] === 'string' &&
+                    recipe.ingredients[i].includes('image')
+                ) {
+                    const imageUrl =
+                        imageSource !== 'google'
+                            ? await getUnsplashImage(recipe.ingredients[i])
+                            : await getGoogleImage(recipe.ingredients[i]);
+                    if (imageUrl) {
+                        recipe.ingredients[i] = imageUrl;
+                    }
+                }
+            }
+        }
+        if (recipe.instructions && Array.isArray(recipe.instructions)) {
+            for (let i = 0; i < recipe.instructions.length; i++) {
+                if (
+                    typeof recipe.instructions[i] === 'string' &&
+                    recipe.instructions[i].includes('image')
+                ) {
+                    const imageUrl =
+                        imageSource !== 'google'
+                            ? await getUnsplashImage(recipe.instructions[i])
+                            : await getGoogleImage(recipe.instructions[i]);
+                    if (imageUrl) {
+                        recipe.instructions[i] = imageUrl;
+                    }
+                }
+            }
+        }
+        if (
+            recipe.description &&
+            typeof recipe.description === 'string' &&
+            recipe.description.includes('image')
+        ) {
+            const imageUrl =
+                imageSource !== 'google'
+                    ? await getUnsplashImage(recipe.description)
+                    : await getGoogleImage(recipe.description);
+            if (imageUrl) {
+                recipe.description = imageUrl;
+            }
+        }
+        if (recipe.title && typeof recipe.title === 'string' && recipe.title.includes('image')) {
+            const imageUrl =
+                imageSource !== 'google'
+                    ? await getUnsplashImage(recipe.title)
+                    : await getGoogleImage(recipe.title);
+            if (imageUrl) {
+                recipe.title = imageUrl;
+            }
+        }
     }
-    return presentation;
+    return recipe;
 };
