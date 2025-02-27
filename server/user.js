@@ -52,27 +52,27 @@ const userRoutes = (app) => {
                     verificationToken: crypto.randomBytes(32).toString('hex')
                 });
                 await user.save();
-        //         await transporter.sendMail({
-        //             to: email,
-        //             from: process.env.FROM_EMAIL,
-        //             subject: 'Welcome to AutoResearch.pro!',
-        //             html: `
-        //                 <html>
-        //                 <body style="font-family: 'Open Sans', sans-serif; color: #333;">
-        //                     <div style="max-width:600px; margin: auto; padding:20px; border:1px solid #eee; border-radius:8px; background-color:#fff;">
-        //                     <h1 style="color: #3498DB;">Welcome to AutoResearch.pro!</h1>
-        //                     <p>Hi ${firstName},</p>
-        //                     <p>Thank you for joining AutoResearch.pro – your AI-powered partner for automating your research workflow and instantly generating professional presentations.</p>
-        //                     <p>Please verify your email address to activate your account and start exploring our features:</p>
-        //                     <a href="${process.env.FRONTEND_URL}/api/auth/verify-email?token=${user.verificationToken}&email=${encodeURIComponent(email)}" style="display:inline-block; padding:10px 20px; margin:10px 0; background-color:#3498DB; color:#fff; text-decoration:none; border-radius:4px;">Verify Your Email</a>
-        //                     <p>Once verified, you can dive into dynamic presentation customization and AI-driven insights to elevate your research.</p>
-        //                     <p>If you have any questions, our support team is here to help.</p>
-        //                     <p>Warm regards,<br>The AutoResearch.pro Team</p>
-        //                     </div>
-        //                 </body>
-        //                 </html>
-        //   `
-        //         });
+                //         await transporter.sendMail({
+                //             to: email,
+                //             from: process.env.FROM_EMAIL,
+                //             subject: 'Welcome to AutoResearch.pro!',
+                //             html: `
+                //                 <html>
+                //                 <body style="font-family: 'Open Sans', sans-serif; color: #333;">
+                //                     <div style="max-width:600px; margin: auto; padding:20px; border:1px solid #eee; border-radius:8px; background-color:#fff;">
+                //                     <h1 style="color: #3498DB;">Welcome to AutoResearch.pro!</h1>
+                //                     <p>Hi ${firstName},</p>
+                //                     <p>Thank you for joining AutoResearch.pro – your AI-powered partner for automating your research workflow and instantly generating professional presentations.</p>
+                //                     <p>Please verify your email address to activate your account and start exploring our features:</p>
+                //                     <a href="${process.env.FRONTEND_URL}/api/auth/verify-email?token=${user.verificationToken}&email=${encodeURIComponent(email)}" style="display:inline-block; padding:10px 20px; margin:10px 0; background-color:#3498DB; color:#fff; text-decoration:none; border-radius:4px;">Verify Your Email</a>
+                //                     <p>Once verified, you can dive into dynamic presentation customization and AI-driven insights to elevate your research.</p>
+                //                     <p>If you have any questions, our support team is here to help.</p>
+                //                     <p>Warm regards,<br>The AutoResearch.pro Team</p>
+                //                     </div>
+                //                 </body>
+                //                 </html>
+                //   `
+                //         });
             }
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
             res.status(201).json({ token, user: { ...user.toJSON(), password: undefined } });

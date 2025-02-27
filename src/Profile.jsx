@@ -273,7 +273,7 @@ const Profile = () => {
                         </form>
                         <VStack spacing={4} width="100%" mt={8}>
                             <Heading size="md">Presentations</Heading>
-                            <PresentationList my />
+                            <RecipeList my />
                         </VStack>
                     </VStack>
                 </CardBody>
