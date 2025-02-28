@@ -201,7 +201,7 @@ const BulkCreator = () => {
             </FormControl>
 
             <Button
-                colorScheme="blue"
+                colorScheme="primary"
                 onClick={handleGenerateTitles}
                 isLoading={titleGenerating}
                 loadingText="Generating Titles"
