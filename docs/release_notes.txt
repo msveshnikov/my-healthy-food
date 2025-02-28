@@ -1,0 +1,21 @@
+## My Healthy Food - Initial Release
+
+Welcome to the first release of My Healthy Food!
+
+**Key Features in this version:**
+
+* **AI-Powered Recipe Generation:** Generate unique and delicious recipes in any language using our advanced AI.
+* **Multi-Language Support:** Create recipes in various languages to explore global cuisines.
+* **Real-time Web Search Integration:** Get relevant and up-to-date recipes with pre-search functionality.
+* **Rich Recipe Rendering:** Enjoy beautifully formatted and easy-to-read recipes.
+* **Social Sharing:** Share your culinary creations with friends and family.
+* **Image Integration:** Recipes are enhanced with relevant images from Unsplash and Google Images.
+* **User Authentication:** Create secure accounts to save your favorite recipes and personalize your experience.
+* **User Feedback System:**  Provide feedback directly within the app to help us improve.
+
+**Known Issues:**
+
+* Initial release, may contain minor bugs.
+* Performance may vary depending on network conditions and device.
+
+Thank you for trying My Healthy Food! We are excited to bring you more features and improvements in future updates.  Please send us your feedback!
