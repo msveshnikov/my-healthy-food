@@ -30,7 +30,6 @@ export const enrichRecipeMetadata = async (html, slug) => {
         const title = recipe.seoTitle || recipe.title;
         const description = recipe.seoDescription || recipe.description;
         const imageUrl = recipe.imageUrl ?? 'https://MyHealthy.Food/image.jpg';
-        console.log(imageUrl);
         $('title').text(`${title} | My Healthy Food`);
         $('meta[name="description"]').attr('content', description);
         $('meta[property="og:title"]').attr('content', title);
@@ -76,10 +75,41 @@ export const enrichRecipeMetadata = async (html, slug) => {
         };
 
         $('head').append(`<script type="application/ld+json">${JSON.stringify(schema)}</script>`);
-
+        $('body').append(generateRecipeHtmlBody(recipe));
         return $.html();
     } catch (error) {
         console.error('Error enriching recipe metadata:', error);
         return html;
+    }
+};
+
+export const generateRecipeHtmlBody = (recipe) => {
+    try {
+        const $ = load('<html><body></body></html>');
+        $('body').append(`<h1>${recipe.title}</h1>`);
+        $('body').append(`<p>${recipe.description}</p>`);
+
+        if (recipe.ingredients && recipe.ingredients.length > 0) {
+            $('body').append('<h2>Ingredients</h2>');
+            const ingredientsList = $('<ul></ul>');
+            recipe.ingredients.forEach((ingredient) => {
+                ingredientsList.append(`<li>${ingredient.name}</li>`);
+            });
+            $('body').append(ingredientsList);
+        }
+
+        if (recipe.instructions && recipe.instructions.length > 0) {
+            $('body').append('<h2>Instructions</h2>');
+            const instructionsList = $('<ol></ol>');
+            recipe.instructions.forEach((instruction) => {
+                instructionsList.append(`<li>${instruction}</li>`);
+            });
+            $('body').append(instructionsList);
+        }
+
+        return $.html();
+    } catch (error) {
+        console.error('Error generating recipe HTML body:', error);
+        return '<div>Error generating recipe HTML.</div>';
     }
 };
