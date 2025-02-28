@@ -16,6 +16,7 @@ advanced AI models, it generates recipes in multiple languages based on user pro
 real-time web searches to enhance accuracy and relevance. The platform aims to provide a seamless
 user experience with features ranging from recipe rendering and SEO optimization to social sharing
 and integration with image resources like Unsplash and Google Images.
+Monetization is through SEO/AdSense.
 
 ## Key Features
 
@@ -130,3 +131,8 @@ development and deployment of client, server, and documentation components.
       build, test, and deployment processes, ensuring rapid and reliable software releases.
 
 ## TODO
+
+- add more info to recipe schema/renderer
+- add bulk recipes generation (select cousine, then generate 100 recipes in each language)
+- add recipe rating system
+- 

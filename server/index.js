@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
-import promBundle from 'express-prom-bundle';
 import { promises as fsPromises } from 'fs';
 import dotenv from 'dotenv';
-import Stripe from 'stripe';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
@@ -12,23 +10,17 @@ import compression from 'compression';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { getTextGemini } from './gemini.js';
-import { getTextGrok } from './grok.js';
-import { getTextGpt } from './openai.js';
-import { getTextDeepseek } from './deepseek.js';
-import User from './models/User.js';
 import Recipe from './models/Recipe.js';
 import Feedback from './models/Feedback.js';
 import { replaceRecipeImages } from './imageService.js';
 import userRoutes from './user.js';
 import adminRoutes from './admin.js';
-import { authenticateToken, authenticateTokenOptional } from './middleware/auth.js';
+import { authenticateToken, isAdmin } from './middleware/auth.js';
 import { fetchSearchResults, searchWebContent } from './search.js';
 import { enrichRecipeMetadata, slugify } from './utils.js';
-import { getTextClaude } from './claude.js';
 
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_KEY);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
@@ -40,26 +32,7 @@ const corsOptions = {
     origin: process.env.NODE_ENV === 'production' ? 'https://MyHealthy.Food' : '*'
 };
 app.use(cors(corsOptions));
-
-app.use((req, res, next) => {
-    if (req.originalUrl === '/api/stripe-webhook') {
-        next();
-    } else {
-        express.json({ limit: '15mb' })(req, res, next);
-    }
-});
-
-const metricsMiddleware = promBundle({
-    includeMethod: true,
-    includePath: true,
-    includeStatusCode: true,
-    customLabels: { model: 'No' },
-    transformLabels: (labels, req) => {
-        labels.model = req?.body?.model ?? 'No';
-        return labels;
-    }
-});
-app.use(metricsMiddleware);
+app.use(express.json({ limit: '15mb' }));
 app.use(express.static(join(__dirname, '../dist')));
 app.use(morgan('dev'));
 app.use(compression());
@@ -80,57 +53,12 @@ adminRoutes(app);
 
 const generateAIResponse = async (prompt, model, temperature = 0.7) => {
     switch (model) {
-        case 'o3-mini':
-        case 'gpt-4o-mini': {
-            return await getTextGpt(prompt, model, temperature);
-        }
-        case 'gemini-2.0-pro-exp-02-05':
-        case 'gemini-2.0-flash-001':
+        // case 'gemini-2.0-flash-001':
         case 'gemini-2.0-flash-thinking-exp-01-21':
             return await getTextGemini(prompt, model, temperature);
-        case 'deepseek-reasoner':
-            return await getTextDeepseek(prompt, model, temperature);
-        case 'claude-3-7-sonnet-20250219':
-            return await getTextClaude(prompt, model, temperature);
-        case 'grok-2-latest':
-        case 'grok-3-mini':
-            return await getTextGrok(prompt, model, temperature);
+
         default:
             throw new Error('Invalid model specified');
-    }
-};
-
-export const checkAiLimit = async (req, res, next) => {
-    try {
-        const user = await User.findById(req.user.id);
-        if (
-            user &&
-            user.subscriptionStatus !== 'active' &&
-            user.subscriptionStatus !== 'trialing'
-        ) {
-            const now = new Date();
-            if (user.lastAiRequestTime) {
-                const lastRequest = new Date(user.lastAiRequestTime);
-                if (now.toDateString() === lastRequest.toDateString()) {
-                    if (user.aiRequestCount >= 13) {
-                        return res
-                            .status(429)
-                            .json({ error: 'Daily recipe limit reached, please upgrade' });
-                    }
-                    user.aiRequestCount++;
-                } else {
-                    user.aiRequestCount = 1;
-                    user.lastAiRequestTime = now;
-                }
-            } else {
-                user.lastAiRequestTime = now;
-                user.aiRequestCount = 1;
-            }
-            await user.save();
-        }
-        next();
-    } catch (err) {
-        next(err);
     }
 };
 
@@ -140,7 +68,7 @@ const extractCodeSnippet = (text) => {
     return match ? match[1] : text;
 };
 
-app.post('/api/generate-recipe', async (req, res) => {
+app.post('/api/generate-recipe', authenticateToken, isAdmin, async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
         console.log(prompt, language, model, temperature, deepResearch, imageSource);
@@ -317,7 +245,7 @@ app.delete('/api/recipes/:id', authenticateToken, async (req, res) => {
     }
 });
 
-app.post('/api/feedback', authenticateTokenOptional, async (req, res) => {
+app.post('/api/feedback', async (req, res) => {
     try {
         const { message, type } = req.body;
         const feedback = new Feedback({
@@ -330,69 +258,6 @@ app.post('/api/feedback', authenticateTokenOptional, async (req, res) => {
         res.status(201).json(feedback);
     } catch (error) {
         res.status(500).json({ error: error.message });
-    }
-});
-
-app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-    try {
-        const event = await stripe.webhooks.constructEventAsync(
-            req.body,
-            req.headers['stripe-signature'],
-            process.env.STRIPE_WH_SECRET
-        );
-
-        console.log('✅ Success:', event.id);
-
-        switch (event.type) {
-            case 'customer.subscription.updated':
-            case 'customer.subscription.created':
-            case 'customer.subscription.deleted': {
-                const subscription = event.data.object;
-                console.log(subscription);
-                const customer = await stripe.customers.retrieve(subscription.customer);
-                const user = await User.findOneAndUpdate(
-                    { email: customer.email },
-                    {
-                        subscriptionStatus: subscription.status,
-                        subscriptionId: subscription.id
-                    }
-                );
-                if (!user) {
-                    console.error(`User not found for email ${customer.email}`);
-                    break;
-                }
-
-                const measurement_id = `G-00FKSX54XW`;
-                const api_secret = process.env.GA_API_SECRET;
-
-                fetch(
-                    `https://www.google-analytics.com/mp/collect?measurement_id=${measurement_id}&api_secret=${api_secret}`,
-                    {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            client_id: '123456.7654321',
-                            user_id: user._id,
-                            events: [
-                                {
-                                    name: 'purchase',
-                                    params: {
-                                        subscriptionStatus: subscription.status,
-                                        subscriptionId: subscription.id
-                                    }
-                                }
-                            ]
-                        })
-                    }
-                );
-                break;
-            }
-            default:
-                console.log(`Unhandled event type ${event.type}`);
-        }
-
-        res.json({ received: true });
-    } catch (error) {
-        res.status(400).send(`Webhook Error: ${error.message}`);
     }
 });
 
