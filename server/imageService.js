@@ -51,14 +51,14 @@ export const googleImages = async (term) => {
 
 export const getUnsplashImage = async (prompt) => {
     try {
+        prompt = 'food ' + prompt.substring(0, 30);
+        // const translated = await getText(
+        //     'Translate sentences in brackets [] into English:\n[' + prompt + ']\n'
+        // );
+        // if (translated) {
+        //     prompt = translated;
+        // }
         console.log('Searching unsplash for image:', prompt);
-        prompt = prompt.substring(0, 50);
-        const translated = await getText(
-            'Translate sentences in brackets [] into English:\n[' + prompt + ']\n'
-        );
-        if (translated) {
-            prompt = translated;
-        }
         const response = await fetch(
             `https://api.unsplash.com/search/photos?query=${encodeURIComponent(prompt)}&orientation=landscape&client_id=${process.env.UNSPLASH_API_KEY}`
         );
@@ -82,7 +82,7 @@ export const getUnsplashImage = async (prompt) => {
 export const getGoogleImage = async (prompt) => {
     try {
         console.log('Searching Google for image:', prompt);
-        const images = await googleImages(prompt, 'en');
+        const images = await googleImages('food ' + prompt, 'en');
         const randomImage = images[Math.floor(Math.random() * images.length)];
         if (!randomImage?.image) {
             return null;

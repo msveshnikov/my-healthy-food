@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Landing } from './Landing';
 import { lazy, Suspense, createContext, useState, useEffect } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Navbar from './Navbar';
+// import Navbar from './Navbar';
 import Terms from './Terms';
 import Privacy from './Privacy';
 import Login from './Login';
@@ -80,7 +80,7 @@ function App() {
                     <UserContext.Provider value={{ user, setUser }}>
                         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                             <Box pb="50px" minH="100vh" bg="gray.50">
-                                <Navbar />
+                                {/* <Navbar /> */}
                                 <Container maxW="container.xl" py={8}>
                                     <VStack spacing={8}>
                                         <Routes>
