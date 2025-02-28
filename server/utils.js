@@ -1,4 +1,5 @@
 import { load } from 'cheerio';
+import Recipe from './models/Recipe.js';
 
 export const slugify = (text) => {
     return text
@@ -20,17 +21,20 @@ export const getIpFromRequest = (req) => {
     return ips[0].trim();
 };
 
-export const enrichRecipeMetadata = async (html, recipe) => {
+export const enrichRecipeMetadata = async (html, slug) => {
     try {
-        if (!recipe || !recipe.slug) return html;
+        const recipe = await Recipe.findOne({ slug })
+            .select(
+                'title seoTitle description seoDescription images ingredients instructions prepTime cookTime totalTime cuisine dishType tags createdAt'
+            )
+            .lean()
+            .exec();
+        if (!recipe) return html;
 
         const $ = load(html);
         const title = recipe.seoTitle || recipe.title;
         const description = recipe.seoDescription || recipe.description;
-        const imageUrl =
-            recipe.images && recipe.images.length > 0
-                ? recipe.images[0]
-                : 'https://MyHealthy.Food/image1.jpg'; // Default image
+        const imageUrl = recipe.imageUrl ?? 'https://MyHealthy.Food/image.jpg';
 
         $('title').text(`${title} | My Healthy Food`);
         $('meta[name="description"]').attr('content', description);
@@ -71,7 +75,7 @@ export const enrichRecipeMetadata = async (html, recipe) => {
                 name: 'My Healthy Food',
                 logo: {
                     '@type': 'ImageObject',
-                    url: 'https://MyHealthy.Food/logo.png' // Replace with your logo URL
+                    url: 'https://MyHealthy.Food/android-chrome-192x192.png' // Replace with your logo URL
                 }
             }
         };

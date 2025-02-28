@@ -3,3 +3,11 @@ GET http://localhost:3000/sitemap.xml
 
 ###
 GET https://MyHealthy.Food/sitemap.xml
+###
+
+GET https://MyHealthy.Food/recipe/vegan-tomato-basil-pasta
+
+###
+
+
+GET http://localhost:3000/recipe/easy-fresh-salmon-poke-bowl

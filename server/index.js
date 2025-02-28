@@ -181,6 +181,8 @@ ${exampleSchema}`;
         const recipe = new Recipe({
             title: parsed.title || prompt,
             description: parsed.description,
+            seoTitle: parsed.seoTitle,
+            seoDescription: parsed.seoDescription,
             language,
             recipeData: parsed,
             slug: slugify(parsed.title || prompt),
