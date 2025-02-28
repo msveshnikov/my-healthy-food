@@ -170,14 +170,14 @@ app.post('/api/generate-recipe', authenticateToken, isAdmin, async (req, res) =>
 
 app.post('/api/generate-recipe-titles', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const { cuisine, language, model, count } = req.body;
-        if (!cuisine || !language || !model || !count || count > 50) {
+        const { cuisine, model, count } = req.body;
+        if (!cuisine || !model || !count || count > 50) {
             return res
                 .status(400)
                 .json({ error: 'Invalid request parameters for title generation.' });
         }
 
-        const titles = await generateRecipeTitles(cuisine, language, model, count);
+        const titles = await generateRecipeTitles(cuisine, 'en', model, count);
         res.status(200).json({ titles });
     } catch (error) {
         console.error('Recipe titles generation error:', error);

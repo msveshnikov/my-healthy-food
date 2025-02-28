@@ -177,12 +177,12 @@ const RecipeSchema = new mongoose.Schema(
         },
         seoTitle: {
             type: String,
-            maxLength: 70,
+            maxLength: 170,
             description: 'SEO title for the recipe page'
         },
         seoDescription: {
             type: String,
-            maxLength: 160,
+            maxLength: 360,
             description: 'SEO description for the recipe page'
         },
         source: {

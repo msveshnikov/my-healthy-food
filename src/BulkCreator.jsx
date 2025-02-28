@@ -16,7 +16,9 @@ import {
     VStack,
     Select,
     List,
-    ListItem
+    ListItem,
+    CheckboxGroup,
+    Checkbox
 } from '@chakra-ui/react';
 
 const BulkCreator = () => {
@@ -26,11 +28,12 @@ const BulkCreator = () => {
     const [titleGenerating, setTitleGenerating] = useState(false);
     const [titlesError, setTitlesError] = useState('');
 
-    const [language, setLanguage] = useState('en');
-    const [count, setCount] = useState(1);
+    const [languages, setLanguages] = useState(['en']);
     const [recipeGenerating, setRecipeGenerating] = useState(false);
     const [recipesError, setRecipesError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [generatedRecipeCount, setGeneratedRecipeCount] = useState(0);
+    const [failedRecipes, setFailedRecipes] = useState([]);
 
     const handleGenerateTitles = async () => {
         setTitleGenerating(true);
@@ -45,7 +48,7 @@ const BulkCreator = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
-                    prompt: cuisine,
+                    cuisine: cuisine,
                     count: numTitles,
                     model: 'gemini-2.0-flash-thinking-exp-01-21'
                 })
@@ -69,6 +72,8 @@ const BulkCreator = () => {
         setRecipeGenerating(true);
         setRecipesError('');
         setSuccessMessage('');
+        setGeneratedRecipeCount(0);
+        setFailedRecipes([]);
 
         if (recipeTitles.length === 0) {
             setRecipesError('No recipe titles generated. Please generate titles first.');
@@ -76,45 +81,64 @@ const BulkCreator = () => {
             return;
         }
 
-        try {
-            const generatedRecipesCount = recipeTitles.length * parseInt(count, 10);
-            if (generatedRecipesCount > 50) {
-                setRecipesError(
-                    'Cannot generate more than 50 recipes in bulk. Adjust number of titles or recipes per title.'
-                );
-                setRecipeGenerating(false);
-                return;
-            }
-
-            const response = await fetch('/api/generate-bulk-recipes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    prompt: recipeTitles.join(', '), // Joining titles as prompt for bulk generation
-                    language: language,
-                    model: 'gemini-2.0-flash-thinking-exp-01-21',
-                    temperature: 0.7,
-                    deepResearch: false,
-                    imageSource: 'unsplash',
-                    count: count // Number of recipes per title (currently using count as total recipes, adjust as needed)
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to generate recipes.');
-            }
-
-            const data = await response.json();
-            setSuccessMessage(`Successfully generated ${data.recipeCount} recipes.`);
-        } catch (err) {
-            setRecipesError(err.message);
-        } finally {
+        const totalRecipesToGenerate = recipeTitles.length * languages.length;
+        if (totalRecipesToGenerate > 50) {
+            setRecipesError(
+                'Cannot generate more than 50 recipes in bulk. Reduce number of titles or selected languages.'
+            );
             setRecipeGenerating(false);
+            return;
         }
+
+        let generatedCount = 0;
+        let failures = [];
+
+        for (const title of recipeTitles) {
+            for (const lang of languages) {
+                try {
+                    const response = await fetch(API_URL + '/api/generate-recipe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            prompt: `${cuisine} ${title}`,
+                            language: lang,
+                            model: 'gemini-2.0-flash-thinking-exp-01-21',
+                            temperature: 0.7,
+                            deepResearch: false,
+                            imageSource: 'unsplash'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        failures.push({
+                            title: `${cuisine} ${title} (${lang})`,
+                            error: errorData.error || 'Failed to generate recipe.'
+                        });
+                    } else {
+                        generatedCount++;
+                    }
+                    setGeneratedRecipeCount(generatedCount);
+                } catch (err) {
+                    failures.push({ title: `${cuisine} ${title} (${lang})`, error: err.message });
+                    setFailedRecipes(failures);
+                }
+            }
+        }
+
+        if (failures.length > 0) {
+            setRecipesError(
+                `Generated ${generatedCount} recipes with ${failures.length} failures. See details below.`
+            );
+            setFailedRecipes(failures);
+        } else {
+            setSuccessMessage(`Successfully generated ${generatedCount} recipes.`);
+        }
+
+        setRecipeGenerating(false);
     };
 
     return (
@@ -213,28 +237,18 @@ const BulkCreator = () => {
                     </Heading>
 
                     <FormControl>
-                        <FormLabel>Language for Recipes</FormLabel>
-                        <Select value={language} onChange={(e) => setLanguage(e.target.value)}>
-                            <option value="en">English</option>
-                            <option value="es">Spanish</option>
-                            <option value="pt">Portuguese</option>
-                            <option value="fr">French</option>
-                            <option value="de">German</option>
-                            <option value="ru">Russian</option>
-                            <option value="it">Italian</option>
-                        </Select>
-                    </FormControl>
-
-                    <FormControl>
-                        <FormLabel>Number of Recipes per Title</FormLabel>
-                        <NumberInput
-                            min={1}
-                            max={5}
-                            value={count}
-                            onChange={(valueString) => setCount(parseInt(valueString, 10))}
-                        >
-                            <NumberInputField />
-                        </NumberInput>
+                        <FormLabel>Languages for Recipes</FormLabel>
+                        <CheckboxGroup value={languages} onChange={(value) => setLanguages(value)}>
+                            <VStack alignItems="start">
+                                <Checkbox value="en">English</Checkbox>
+                                <Checkbox value="es">Spanish</Checkbox>
+                                <Checkbox value="pt">Portuguese</Checkbox>
+                                <Checkbox value="fr">French</Checkbox>
+                                <Checkbox value="de">German</Checkbox>
+                                <Checkbox value="ru">Russian</Checkbox>
+                                <Checkbox value="it">Italian</Checkbox>
+                            </VStack>
+                        </CheckboxGroup>
                     </FormControl>
                 </VStack>
             )}
@@ -254,7 +268,24 @@ const BulkCreator = () => {
             {recipeGenerating && (
                 <Box mt={4} textAlign="center">
                     <Spinner size="lg" />
-                    <Text mt={2}>Generating recipes, please wait...</Text>
+                    <Text mt={2}>
+                        Generating recipes: {generatedRecipeCount} generated, please wait...
+                    </Text>
+                </Box>
+            )}
+
+            {failedRecipes.length > 0 && recipesError && (
+                <Box mt={4}>
+                    <Heading as="h3" size="sm" mb={2} color="red.500">
+                        Failed Recipes:
+                    </Heading>
+                    <List spacing={1}>
+                        {failedRecipes.map((failure, index) => (
+                            <ListItem key={index} fontSize="sm" color="red.400">
+                                {failure.title} - Error: {failure.error}
+                            </ListItem>
+                        ))}
+                    </List>
                 </Box>
             )}
         </Box>

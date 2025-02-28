@@ -131,6 +131,3 @@ development and deployment of client, server, and documentation components.
       build, test, and deployment processes, ensuring rapid and reliable software releases.
 
 ## TODO
-
-- add bulk recipes generation (select cousine,language, count - then generate N recipe titles, then generate each
-  title in each language manually after approval, using normal one recipe endpoint /api/generate-recipe)
