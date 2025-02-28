@@ -150,10 +150,7 @@ independent scaling of client and server components.
     - **Automated CI/CD Pipelines:** Fully implement CI/CD pipelines using platforms like GitHub
       Actions or GitLab CI to automate the build, test, and deployment processes, ensuring rapid,
       reliable, and consistent software releases.
-    - **Comprehensive Automated Testing:** Develop a comprehensive suite of automated tests,
-      including unit, integration, and end-to-end tests, to ensure code quality, prevent
-      regressions, and increase confidence in software deployments.
-
+    
 ## TODO
 
 - **UI/UX Enhancements:**

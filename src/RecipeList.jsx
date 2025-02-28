@@ -10,7 +10,8 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
-    SimpleGrid
+    SimpleGrid,
+    Image
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -92,6 +93,17 @@ const RecipeList = () => {
                     {recipes.map((recipe) => (
                         <Box key={recipe._id} p={5} shadow="md" borderWidth="1px" borderRadius="md">
                             <Link to={`/recipe/${recipe.slug || recipe._id}`}>
+                                {recipe.imageUrl && (
+                                    <Image
+                                        src={recipe.imageUrl}
+                                        alt={recipe.title}
+                                        borderRadius="md"
+                                        mb={4}
+                                        width="100%"
+                                        height="200px"
+                                        objectFit="cover"
+                                    />
+                                )}
                                 <Heading fontSize="xl">{recipe.title}</Heading>
                                 <Text mt={4} noOfLines={3} color="gray.600">
                                     {recipe.description}
