@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import {
     Box,
     Heading,
@@ -257,7 +258,7 @@ const Recipe = () => {
                         {recipe.instructions &&
                             recipe.instructions.map((instruction, index) => (
                                 <ListItem key={index} fontSize="lg">
-                                    {instruction}
+                                    <ReactMarkdown>{instruction}</ReactMarkdown>
                                 </ListItem>
                             ))}
                     </List>
