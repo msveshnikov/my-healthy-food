@@ -131,4 +131,4 @@ development and deployment of client, server, and documentation components.
 
 ## TODO
 
-- after generation redirect to the recipe page (/recipe/:slug)
+- improve desktop layout
