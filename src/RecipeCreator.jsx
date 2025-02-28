@@ -30,6 +30,7 @@ const RecipeCreator = () => {
     const [model, setModel] = useState('gemini-2.0-flash-thinking-exp-01-21');
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [imageSource, setImageSource] = useState('unsplash');
     const toast = useToast();
 
     const handleSubmit = async (event) => {
@@ -44,7 +45,7 @@ const RecipeCreator = () => {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({ prompt, language, model, deepResearch: true })
+                body: JSON.stringify({ prompt, language, model, deepResearch: true, imageSource })
             });
 
             if (!response.ok) {
@@ -119,6 +120,17 @@ const RecipeCreator = () => {
                             <option value="deepseek-reasoner">Deepseek Reasoner</option>
                             <option value="claude-3-7-sonnet-20250219">Claude 3.5 Sonnet</option>
                             <option value="grok-2-latest">Grok 2</option>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl id="imageSource">
+                        <FormLabel>Image Source</FormLabel>
+                        <Select
+                            value={imageSource}
+                            onChange={(e) => setImageSource(e.target.value)}
+                        >
+                            <option value="unsplash">Unsplash</option>
+                            <option value="google">Google Images</option>
                         </Select>
                     </FormControl>
 
