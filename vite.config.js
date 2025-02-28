@@ -23,18 +23,7 @@ export default defineConfig({
                         type: 'image/png'
                     }
                 ]
-            },
-            devOptions: {
-                enabled: true
             }
         })
-        // sentryVitePlugin({
-        //     org: 'maxsoft',
-        //     project: 'auto-research'
-        // })
     ]
-
-    // build: {
-    //     sourcemap: true
-    // }
 });

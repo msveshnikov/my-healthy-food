@@ -26,17 +26,29 @@
         },
         "dishType": {
             "type": "string",
-            "description": "Type of dish (e.g., 'Appetizer', 'Main Course', 'Dessert')"
+            "description": "Type of dish (e.g., 'Appetizer', 'Main Course', 'Dessert')",
+            "enum": ["Appetizer", "Main Course", "Dessert", "Side Dish", "Snack", "Drink", "Other"]
         },
         "mealType": {
             "type": "string",
-            "description": "Meal type (e.g., 'Breakfast', 'Lunch', 'Dinner', 'Snack')"
+            "description": "Meal type (e.g., 'Breakfast', 'Lunch', 'Dinner', 'Snack')",
+            "enum": ["Breakfast", "Lunch", "Dinner", "Snack", "Brunch", "Dessert", "Teatime"]
         },
         "dietaryRestrictions": {
             "type": "array",
             "items": {
                 "type": "string",
-                "description": "Dietary restrictions (e.g., 'Vegetarian', 'Vegan', 'Gluten-Free')"
+                "description": "Dietary restrictions (e.g., 'Vegetarian', 'Vegan', 'Gluten-Free')",
+                "enum": [
+                    "Vegetarian",
+                    "Vegan",
+                    "Gluten-Free",
+                    "Dairy-Free",
+                    "Nut-Free",
+                    "Pescatarian",
+                    "Low-Carb",
+                    "Keto"
+                ]
             }
         },
         "category": {
@@ -58,7 +70,7 @@
         },
         "ingredients": {
             "type": "array",
-            "description": "List of ingredients as strings",
+            "description": "List of ingredients",
             "items": {
                 "type": "object",
                 "properties": {
@@ -77,6 +89,16 @@
                         "type": "string",
                         "description": "Unit of measurement (e.g., 'cup', 'tbsp', 'g', 'ml')",
                         "maxLength": 20
+                    },
+                    "notes": {
+                        "type": "string",
+                        "description": "Optional notes for ingredient preparation or alternatives",
+                        "maxLength": 200
+                    },
+                    "imageUrl": {
+                        "type": "string",
+                        "description": "Optional URL for ingredient image",
+                        "format": "url"
                     }
                 },
                 "required": ["name"]
@@ -102,7 +124,8 @@
         "source": {
             "type": "string",
             "description": "Source of the recipe (e.g., 'ai-generated', 'user-submitted')",
-            "default": "ai-generated"
+            "default": "ai-generated",
+            "enum": ["ai-generated", "user-submitted", "curated"]
         },
         "servings": {
             "type": "string",
@@ -123,6 +146,76 @@
         "calories": {
             "type": "string",
             "description": "Approximate calories per serving"
+        },
+        "nutritionalInformation": {
+            "type": "object",
+            "description": "Detailed nutritional information per serving",
+            "properties": {
+                "servingSize": {
+                    "type": "string",
+                    "description": "Serving size for nutritional information (e.g., 'per serving', 'per 100g')"
+                },
+                "calories": {
+                    "type": "string",
+                    "description": "Calories per serving"
+                },
+                "protein": {
+                    "type": "string",
+                    "description": "Protein per serving (e.g., '15g')"
+                },
+                "fat": {
+                    "type": "string",
+                    "description": "Fat per serving (e.g., '10g')"
+                },
+                "carbohydrates": {
+                    "type": "string",
+                    "description": "Carbohydrates per serving (e.g., '30g')"
+                },
+                "fiber": {
+                    "type": "string",
+                    "description": "Fiber per serving (e.g., '5g')"
+                },
+                "sugar": {
+                    "type": "string",
+                    "description": "Sugar per serving (e.g., '10g')"
+                },
+                "sodium": {
+                    "type": "string",
+                    "description": "Sodium per serving (e.g., '200mg')"
+                },
+                "cholesterol": {
+                    "type": "string",
+                    "description": "Cholesterol per serving (e.g., '50mg')"
+                },
+                "saturatedFat": {
+                    "type": "string",
+                    "description": "Saturated fat per serving (e.g., '5g')"
+                },
+                "unsaturatedFat": {
+                    "type": "string",
+                    "description": "Unsaturated fat per serving (e.g., '5g')"
+                },
+                "transFat": {
+                    "type": "string",
+                    "description": "Trans fat per serving (e.g., '0g')"
+                },
+                "vitaminA": {
+                    "type": "string",
+                    "description": "Vitamin A per serving (e.g., '10% DV')"
+                },
+                "vitaminC": {
+                    "type": "string",
+                    "description": "Vitamin C per serving (e.g., '20% DV')"
+                },
+                "calcium": {
+                    "type": "string",
+                    "description": "Calcium per serving (e.g., '15% DV')"
+                },
+                "iron": {
+                    "type": "string",
+                    "description": "Iron per serving (e.g., '8% DV')"
+                }
+            }
         },
         "rating": {
             "type": "number",
@@ -151,7 +244,8 @@
         },
         "imageSource": {
             "type": "string",
-            "description": "Source of the image (e.g., 'Unsplash', 'Google Images', 'User Upload')"
+            "description": "Source of the image (e.g., 'Unsplash', 'Google Images', 'User Upload')",
+            "enum": ["Unsplash", "Google Images", "User Upload", "AI Generated"]
         },
         "videoUrl": {
             "type": "string",
@@ -160,7 +254,8 @@
         },
         "aiModel": {
             "type": "string",
-            "description": "AI model used to generate the recipe"
+            "description": "AI model used to generate the recipe",
+            "enum": ["openai", "gemini", "claude", "deepseek", "grok"]
         },
         "searchQuery": {
             "type": "string",
@@ -181,12 +276,14 @@
         "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp of recipe creation"
+            "description": "Timestamp of recipe creation",
+            "readOnly": true
         },
         "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp of last update"
+            "description": "Timestamp of last update",
+            "readOnly": true
         },
         "likes": {
             "type": "integer",
@@ -199,6 +296,73 @@
             "description": "Number of shares for the recipe",
             "default": 0,
             "minimum": 0
+        },
+        "difficulty": {
+            "type": "string",
+            "description": "Difficulty level of the recipe (e.g., 'Easy', 'Medium', 'Hard')",
+            "enum": ["Easy", "Medium", "Hard", "Beginner", "Intermediate", "Advanced"]
+        },
+        "equipment": {
+            "type": "array",
+            "description": "List of kitchen equipment needed for the recipe",
+            "items": {
+                "type": "string",
+                "description": "Name of kitchen equipment (e.g., 'Large skillet', 'Baking sheet')"
+            }
+        },
+        "prepNotes": {
+            "type": "string",
+            "description": "Notes about preparation process in general"
+        },
+        "cookNotes": {
+            "type": "string",
+            "description": "Notes about cooking process in general"
+        },
+        "servingSuggestion": {
+            "type": "string",
+            "description": "Suggestion on how to serve the recipe"
+        },
+        "isDraft": {
+            "type": "boolean",
+            "description": "Indicates if the recipe is a draft and not publicly visible",
+            "default": false
+        },
+        "author": {
+            "type": "string",
+            "description": "Name of the recipe author (for user-submitted recipes)"
+        },
+        "suitableForOccasion": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "Occasions the recipe is suitable for (e.g., 'Party', 'Holiday', 'Weeknight Dinner')",
+                "enum": [
+                    "Party",
+                    "Holiday",
+                    "Weeknight Dinner",
+                    "Special Occasion",
+                    "Quick Meal",
+                    "Comfort Food"
+                ]
+            }
+        },
+        "spiceLevel": {
+            "type": "string",
+            "description": "Spice level of the recipe",
+            "enum": ["Mild", "Medium", "Spicy", "Very Spicy"]
+        },
+        "servingTemperature": {
+            "type": "string",
+            "description": "Serving temperature (e.g., 'Hot', 'Cold', 'Warm')",
+            "enum": ["Hot", "Cold", "Warm", "Room Temperature"]
+        },
+        "texture": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "Textures of the recipe (e.g., 'Creamy', 'Crispy', 'Chewy')",
+                "enum": ["Creamy", "Crispy", "Chewy", "Smooth", "Crunchy", "Tender", "Fluffy"]
+            }
         }
     },
     "required": ["title", "ingredients", "instructions"]

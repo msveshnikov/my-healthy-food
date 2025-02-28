@@ -19,6 +19,7 @@ import Recipe from './Recipe';
 const Admin = lazy(() => import('./Admin'));
 const Feedback = lazy(() => import('./Feedback'));
 const Docs = lazy(() => import('./Docs'));
+const BulkCreator = lazy(() => import('./BulkCreator'));
 
 export const API_URL = import.meta.env.DEV ? 'http://localhost:3000' : 'https://myhealthy.food';
 export const UserContext = createContext(null);
@@ -100,6 +101,7 @@ function App() {
                                             />
                                             <Route path="/admin" element={<Admin />} />
                                             <Route path="/docs/*" element={<Docs />} />
+                                            <Route path="/bulk-create" element={<BulkCreator />} />
                                             <Route path="*" element={<Navigate to="/" replace />} />
                                         </Routes>
                                     </VStack>

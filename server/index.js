@@ -17,7 +17,7 @@ import userRoutes from './user.js';
 import adminRoutes from './admin.js';
 import { authenticateToken, isAdmin } from './middleware/auth.js';
 import { fetchSearchResults, searchWebContent } from './search.js';
-import { enrichRecipeMetadata, slugify } from './utils.js';
+import { enrichRecipeMetadata, generateUniqueSlug } from './utils.js';
 
 dotenv.config();
 
@@ -53,10 +53,8 @@ adminRoutes(app);
 
 const generateAIResponse = async (prompt, model, temperature = 0.7) => {
     switch (model) {
-        // case 'gemini-2.0-flash-001':
         case 'gemini-2.0-flash-thinking-exp-01-21':
             return await getTextGemini(prompt, model, temperature);
-
         default:
             throw new Error('Invalid model specified');
     }
@@ -66,6 +64,66 @@ const extractCodeSnippet = (text) => {
     const codeBlockRegex = /```(?:json|js|html)?\n([\s\S]*?)\n```/;
     const match = text.match(codeBlockRegex);
     return match ? match[1] : text;
+};
+
+const generateRecipeObject = async (
+    prompt,
+    language,
+    model,
+    temperature,
+    deepResearch,
+    imageSource,
+    userId
+) => {
+    const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
+    const webSearchContent = await fetchSearchResults(prompt);
+    let webContent = '';
+    if (deepResearch) {
+        webContent = await searchWebContent(webSearchContent);
+    }
+
+    let aiPrompt = `Generate a recipe based on the following prompt: "${prompt}".
+Generate recipe in "${language}" language.
+Research the web and think about the topic before generating if web search results are provided.
+<web_search_results>${JSON.stringify(webSearchContent)}</web_search_results>
+<web_content>${webContent}</web_content>
+Format the result as a JSON object representing the recipe based on schema.
+Use the following example schema as a reference for recipe structure:
+${exampleSchema}`;
+
+    let parsed;
+    try {
+        const result = await generateAIResponse(aiPrompt, model, temperature);
+        parsed = JSON.parse(extractCodeSnippet(result));
+    } catch (e) {
+        console.error('AI response parsing error:', e);
+        throw new Error('Failed to parse AI response');
+    }
+
+    parsed = await replaceRecipeImages(parsed, imageSource);
+
+    const recipe = new Recipe({
+        title: parsed.title || prompt,
+        description: parsed.description,
+        seoTitle: parsed.seoTitle,
+        seoDescription: parsed.seoDescription,
+        language,
+        recipeData: parsed,
+        slug: await generateUniqueSlug(parsed.title || prompt, language),
+        userId: userId,
+        cuisine: parsed.cuisine,
+        category: parsed.category,
+        tags: parsed.tags,
+        imageUrl: parsed.imageUrl,
+        imageSource: imageSource,
+        videoUrl: parsed.videoUrl,
+        aiModel: model,
+        searchQuery: parsed.searchQuery,
+        searchSources: parsed.searchSources,
+        ingredients: parsed.ingredients,
+        instructions: parsed.instructions
+    });
+    return recipe;
 };
 
 app.post('/api/generate-recipe', authenticateToken, isAdmin, async (req, res) => {
@@ -78,62 +136,89 @@ app.post('/api/generate-recipe', authenticateToken, isAdmin, async (req, res) =>
         temperature = temperature || 0.7;
         imageSource = imageSource || 'unsplash';
 
-        const exampleSchema = fs.readFileSync(join(__dirname, 'recipeSchema.json'), 'utf8');
-
-        const webSearchContent = await fetchSearchResults(prompt);
-        let webContent = '';
-        if (deepResearch) {
-            webContent = await searchWebContent(webSearchContent);
-        }
-
-        let aiPrompt = `Generate a recipe based on the following prompt: "${prompt}".
-Generate recipe in "${language}" language.
-Research the web and think about the topic before generating if web search results are provided.
-<web_search_results>${JSON.stringify(webSearchContent)}</web_search_results>
-<web_content>${webContent}</web_content>
-Format the result as a JSON object representing the recipe based on schema.
-Use the following example schema as a reference for recipe structure:
-${exampleSchema}`;
-
-        let parsed;
-        try {
-            const result = await generateAIResponse(aiPrompt, model, temperature);
-            parsed = JSON.parse(extractCodeSnippet(result));
-        } catch (e) {
-            console.error(e);
-            return res.status(500).json({ error: 'Something went wrong, please try again' });
-        }
-
-        parsed = await replaceRecipeImages(parsed, imageSource);
-
-        const recipe = new Recipe({
-            title: parsed.title || prompt,
-            description: parsed.description,
-            seoTitle: parsed.seoTitle,
-            seoDescription: parsed.seoDescription,
+        const recipe = await generateRecipeObject(
+            prompt,
             language,
-            recipeData: parsed,
-            slug: slugify(parsed.title || prompt),
-            userId: req?.user?.id,
-            cuisine: parsed.cuisine,
-            category: parsed.category,
-            tags: parsed.tags,
-            imageUrl: parsed.imageUrl,
-            imageSource: imageSource,
-            videoUrl: parsed.videoUrl,
-            aiModel: model,
-            searchQuery: parsed.searchQuery,
-            searchSources: parsed.searchSources,
-            ingredients: parsed.ingredients,
-            instructions: parsed.instructions
-        });
-
+            model,
+            temperature,
+            deepResearch,
+            imageSource,
+            req?.user?.id
+        );
         await recipe.save();
-
         res.status(201).json(recipe);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/generate-bulk-recipes', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        const { prompt, language, model, temperature, deepResearch, imageSource, count } = req.body;
+        if (!prompt || !language || !model || !count || count > 50) {
+            return res
+                .status(400)
+                .json({ error: 'Invalid request parameters for bulk generation.' });
+        }
+        const recipes = [];
+        for (let i = 0; i < count; i++) {
+            try {
+                const recipe = await generateRecipeObject(
+                    prompt,
+                    language,
+                    model,
+                    temperature,
+                    deepResearch,
+                    imageSource,
+                    req?.user?.id
+                );
+                await recipe.save();
+                recipes.push(recipe);
+            } catch (bulkError) {
+                console.error(`Error generating recipe ${i + 1} in bulk:`, bulkError);
+            }
+        }
+        res.status(201).json({
+            message: `Successfully generated ${recipes.length} recipes.`,
+            recipeCount: recipes.length
+        });
+    } catch (error) {
+        console.error('Bulk recipe generation error:', error);
+        res.status(500).json({ error: 'Failed to generate bulk recipes.' });
+    }
+});
+
+app.post('/api/recipes/:recipeId/rate', authenticateToken, async (req, res) => {
+    try {
+        const { recipeId } = req.params;
+        const { rating } = req.body;
+
+        if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+            return res.status(400).json({ error: 'Rating must be an integer between 1 and 5.' });
+        }
+        if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+            return res.status(400).json({ error: 'Invalid recipe ID.' });
+        }
+
+        const recipe = await Recipe.findById(recipeId);
+        if (!recipe) {
+            return res.status(404).json({ error: 'Recipe not found.' });
+        }
+
+        recipe.ratingCount = (recipe.ratingCount || 0) + 1;
+        recipe.ratingValue = (recipe.ratingValue || 0) + rating;
+        recipe.averageRating = recipe.ratingValue / recipe.ratingCount;
+
+        await recipe.save();
+
+        res.status(200).json({
+            message: 'Rating submitted successfully.',
+            averageRating: recipe.averageRating
+        });
+    } catch (error) {
+        console.error('Recipe rating error:', error);
+        res.status(500).json({ error: 'Failed to rate recipe.' });
     }
 });
 
@@ -161,7 +246,8 @@ app.get('/api/recipes', async (req, res) => {
             description: recipe.description,
             model: recipe.model,
             slug: recipe.slug,
-            imageUrl: recipe.imageUrl
+            imageUrl: recipe.imageUrl,
+            averageRating: recipe.averageRating
         }));
         res.status(200).json(limitedRecipes);
     } catch (error) {
@@ -194,7 +280,8 @@ app.get('/api/myrecipes', authenticateToken, async (req, res) => {
             description: recipe.description,
             model: recipe.model,
             slug: recipe.slug,
-            imageUrl: recipe.imageUrl
+            imageUrl: recipe.imageUrl,
+            averageRating: recipe.averageRating
         }));
         res.status(200).json(limitedRecipes);
     } catch (error) {

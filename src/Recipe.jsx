@@ -15,10 +15,15 @@ import {
     useToast,
     Tag,
     Wrap,
-    WrapItem
+    WrapItem,
+    Link,
+    Stat,
+    StatLabel,
+    StatNumber,
+    StatGroup
 } from '@chakra-ui/react';
 import { API_URL } from './App';
-import { CopyIcon } from '@chakra-ui/icons';
+import { CopyIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 
 const Recipe = () => {
     const { slug } = useParams();
@@ -111,9 +116,9 @@ const Recipe = () => {
                         size="md"
                     />
                 </Flex>
-                {recipe.description && (
+                {recipe.seoDescription && (
                     <Text fontSize="md" color="gray.600" mb={5}>
-                        {recipe.description}
+                        {recipe.seoDescription}
                     </Text>
                 )}
                 {recipe.imageUrl && (
@@ -131,20 +136,23 @@ const Recipe = () => {
 
                 <Divider mb={5} />
 
-                <Box mb={5}>
-                    <Heading as="h2" size="xl" mb={3}>
-                        Description
-                    </Heading>
-                    <Text fontSize="lg">{recipe.description}</Text>
-                </Box>
+                {recipe.description && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            About this recipe
+                        </Heading>
+                        <Text fontSize="lg">{recipe.description}</Text>
+                    </Box>
+                )}
 
-                {recipe.prepTime ||
-                recipe.cookTime ||
-                recipe.totalTime ||
-                recipe.servings ||
-                recipe.cuisine ||
-                recipe.category ||
-                recipe.dietaryRestrictions?.length > 0 ? (
+                {(recipe.prepTime ||
+                    recipe.cookTime ||
+                    recipe.totalTime ||
+                    recipe.servings ||
+                    recipe.cuisine ||
+                    recipe.category ||
+                    recipe.dietaryRestrictions?.length > 0 ||
+                    recipe.difficulty) && (
                     <Box mb={5}>
                         <Heading as="h2" size="xl" mb={3}>
                             Details
@@ -180,6 +188,11 @@ const Recipe = () => {
                                     <Tag colorScheme="blue">Category: {recipe.category}</Tag>
                                 </WrapItem>
                             )}
+                            {recipe.difficulty && (
+                                <WrapItem>
+                                    <Tag colorScheme="blue">Difficulty: {recipe.difficulty}</Tag>
+                                </WrapItem>
+                            )}
                             {recipe.dietaryRestrictions &&
                                 recipe.dietaryRestrictions.map((restriction, index) => (
                                     <WrapItem key={index}>
@@ -188,7 +201,22 @@ const Recipe = () => {
                                 ))}
                         </Wrap>
                     </Box>
-                ) : null}
+                )}
+
+                {recipe.equipment?.length > 0 && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Equipment
+                        </Heading>
+                        <List spacing={2}>
+                            {recipe.equipment.map((item, index) => (
+                                <ListItem key={index} fontSize="lg">
+                                    {item}
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                )}
 
                 <Box mb={5}>
                     <Heading as="h2" size="xl" mb={3}>
@@ -234,6 +262,131 @@ const Recipe = () => {
                             ))}
                     </List>
                 </Box>
+
+                {(recipe.prepNotes || recipe.cookNotes || recipe.servingSuggestion) && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Notes
+                        </Heading>
+                        {recipe.prepNotes && (
+                            <Box mb={3}>
+                                <Heading as="h3" size="lg" mb={2}>
+                                    Preparation Notes
+                                </Heading>
+                                <Text fontSize="md">{recipe.prepNotes}</Text>
+                            </Box>
+                        )}
+                        {recipe.cookNotes && (
+                            <Box mb={3}>
+                                <Heading as="h3" size="lg" mb={2}>
+                                    Cooking Notes
+                                </Heading>
+                                <Text fontSize="md">{recipe.cookNotes}</Text>
+                            </Box>
+                        )}
+                        {recipe.servingSuggestion && (
+                            <Box>
+                                <Heading as="h3" size="lg" mb={2}>
+                                    Serving Suggestion
+                                </Heading>
+                                <Text fontSize="md">{recipe.servingSuggestion}</Text>
+                            </Box>
+                        )}
+                    </Box>
+                )}
+
+                {recipe.nutritionalInformation && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Nutritional Information (per serving)
+                        </Heading>
+                        <StatGroup>
+                            {recipe.nutritionalInformation.calories && (
+                                <Stat>
+                                    <StatLabel>Calories</StatLabel>
+                                    <StatNumber>
+                                        {recipe.nutritionalInformation.calories}
+                                    </StatNumber>
+                                </Stat>
+                            )}
+                            {recipe.nutritionalInformation.protein && (
+                                <Stat>
+                                    <StatLabel>Protein</StatLabel>
+                                    <StatNumber>{recipe.nutritionalInformation.protein}</StatNumber>
+                                </Stat>
+                            )}
+                            {recipe.nutritionalInformation.fat && (
+                                <Stat>
+                                    <StatLabel>Fat</StatLabel>
+                                    <StatNumber>{recipe.nutritionalInformation.fat}</StatNumber>
+                                </Stat>
+                            )}
+                            {recipe.nutritionalInformation.carbohydrates && (
+                                <Stat>
+                                    <StatLabel>Carbs</StatLabel>
+                                    <StatNumber>
+                                        {recipe.nutritionalInformation.carbohydrates}
+                                    </StatNumber>
+                                </Stat>
+                            )}
+                        </StatGroup>
+                        <StatGroup mt={4}>
+                            {recipe.nutritionalInformation.fiber && (
+                                <Stat>
+                                    <StatLabel>Fiber</StatLabel>
+                                    <StatNumber>{recipe.nutritionalInformation.fiber}</StatNumber>
+                                </Stat>
+                            )}
+                            {recipe.nutritionalInformation.sugar && (
+                                <Stat>
+                                    <StatLabel>Sugar</StatLabel>
+                                    <StatNumber>{recipe.nutritionalInformation.sugar}</StatNumber>
+                                </Stat>
+                            )}
+                            {recipe.nutritionalInformation.sodium && (
+                                <Stat>
+                                    <StatLabel>Sodium</StatLabel>
+                                    <StatNumber>{recipe.nutritionalInformation.sodium}</StatNumber>
+                                </Stat>
+                            )}
+                        </StatGroup>
+                    </Box>
+                )}
+
+                {recipe.tags?.length > 0 && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Tags
+                        </Heading>
+                        <Wrap spacing="2" mt={2}>
+                            {recipe.tags.map((tag, index) => (
+                                <WrapItem key={index}>
+                                    <Tag colorScheme="teal">{tag}</Tag>
+                                </WrapItem>
+                            ))}
+                        </Wrap>
+                    </Box>
+                )}
+
+                {recipe.videoUrl && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Video
+                        </Heading>
+                        <Link href={recipe.videoUrl} isExternal>
+                            Watch on YouTube <ExternalLinkIcon mx="2px" />
+                        </Link>
+                    </Box>
+                )}
+
+                {recipe.rating && (
+                    <Box mb={5}>
+                        <Heading as="h2" size="xl" mb={3}>
+                            Rating
+                        </Heading>
+                        <Text fontSize="lg">{recipe.rating}/5</Text>
+                    </Box>
+                )}
             </Box>
         </Container>
     );

@@ -1,14 +1,29 @@
 import { load } from 'cheerio';
 import Recipe from './models/Recipe.js';
+import { slugify as baseSlugify } from 'transliteration';
 
-export const slugify = (text) => {
-    return text
+export const slugify = (text, language) => {
+    const baseSlug = baseSlugify(text)
         .toString()
         .toLowerCase()
         .trim()
         .replace(/\s+/g, '-')
         .replace(/[^\w-]+/g, '')
         .replace(/--+/g, '-');
+    return language ? `${language}-${baseSlug}` : baseSlug;
+};
+
+export const generateUniqueSlug = async (text, language) => {
+    let slug = slugify(text, language);
+    let count = 0;
+    while (true) {
+        const existingRecipe = await Recipe.findOne({ slug });
+        if (!existingRecipe) {
+            return slug;
+        }
+        count++;
+        slug = `${slugify(text, language)}-${count}`;
+    }
 };
 
 export const getIpFromRequest = (req) => {
