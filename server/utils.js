@@ -23,19 +23,14 @@ export const getIpFromRequest = (req) => {
 
 export const enrichRecipeMetadata = async (html, slug) => {
     try {
-        const recipe = await Recipe.findOne({ slug })
-            .select(
-                'title seoTitle description seoDescription images ingredients instructions prepTime cookTime totalTime cuisine dishType tags createdAt'
-            )
-            .lean()
-            .exec();
+        const recipe = await Recipe.findOne({ slug });
         if (!recipe) return html;
 
         const $ = load(html);
         const title = recipe.seoTitle || recipe.title;
         const description = recipe.seoDescription || recipe.description;
         const imageUrl = recipe.imageUrl ?? 'https://MyHealthy.Food/image.jpg';
-
+        console.log(imageUrl);
         $('title').text(`${title} | My Healthy Food`);
         $('meta[name="description"]').attr('content', description);
         $('meta[property="og:title"]').attr('content', title);
