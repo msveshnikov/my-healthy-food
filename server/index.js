@@ -126,6 +126,21 @@ ${exampleSchema}`;
     return recipe;
 };
 
+const generateRecipeTitles = async (cuisine, language, model, count) => {
+    const aiPrompt = `Generate ${count} recipe titles for ${cuisine} cuisine in ${language} language. Return as array of strings.`;
+    try {
+        const result = await generateAIResponse(aiPrompt, model);
+        const titles = JSON.parse(extractCodeSnippet(result));
+        if (!Array.isArray(titles)) {
+            throw new Error('AI response did not return an array of titles.');
+        }
+        return titles;
+    } catch (e) {
+        console.error('AI title generation error:', e);
+        throw new Error('Failed to generate recipe titles.');
+    }
+};
+
 app.post('/api/generate-recipe', authenticateToken, isAdmin, async (req, res) => {
     try {
         let { prompt, language, model, temperature, deepResearch, imageSource } = req.body;
@@ -153,39 +168,20 @@ app.post('/api/generate-recipe', authenticateToken, isAdmin, async (req, res) =>
     }
 });
 
-app.post('/api/generate-bulk-recipes', authenticateToken, isAdmin, async (req, res) => {
+app.post('/api/generate-recipe-titles', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const { prompt, language, model, temperature, deepResearch, imageSource, count } = req.body;
-        if (!prompt || !language || !model || !count || count > 50) {
+        const { cuisine, language, model, count } = req.body;
+        if (!cuisine || !language || !model || !count || count > 50) {
             return res
                 .status(400)
-                .json({ error: 'Invalid request parameters for bulk generation.' });
+                .json({ error: 'Invalid request parameters for title generation.' });
         }
-        const recipes = [];
-        for (let i = 0; i < count; i++) {
-            try {
-                const recipe = await generateRecipeObject(
-                    prompt,
-                    language,
-                    model,
-                    temperature,
-                    deepResearch,
-                    imageSource,
-                    req?.user?.id
-                );
-                await recipe.save();
-                recipes.push(recipe);
-            } catch (bulkError) {
-                console.error(`Error generating recipe ${i + 1} in bulk:`, bulkError);
-            }
-        }
-        res.status(201).json({
-            message: `Successfully generated ${recipes.length} recipes.`,
-            recipeCount: recipes.length
-        });
+
+        const titles = await generateRecipeTitles(cuisine, language, model, count);
+        res.status(200).json({ titles });
     } catch (error) {
-        console.error('Bulk recipe generation error:', error);
-        res.status(500).json({ error: 'Failed to generate bulk recipes.' });
+        console.error('Recipe titles generation error:', error);
+        res.status(500).json({ error: 'Failed to generate recipe titles.' });
     }
 });
 
