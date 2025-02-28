@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Box,
     Heading,
     Textarea,
     Button,
@@ -9,8 +8,6 @@ import {
     VStack,
     FormControl,
     FormLabel,
-    Spinner,
-    Text,
     useToast
 } from '@chakra-ui/react';
 import { API_URL } from './App';
