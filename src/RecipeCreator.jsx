@@ -100,13 +100,13 @@ const RecipeCreator = () => {
                     <FormControl id="model">
                         <FormLabel>AI Model</FormLabel>
                         <Select value={model} onChange={(e) => setModel(e.target.value)}>
+                            <option value="gemini-2.0-flash-001">Gemini 2.0 Flash</option>
                             <option value="gemini-2.0-flash-thinking-exp-01-21">
-                                Gemini Flash Thinking
+                                Gemini 2.0 Flash Thinking
                             </option>
+                            <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro Exp</option>
                             <option value="gpt-4o-mini">GPT-4o Mini</option>
-                            <option value="deepseek-reasoner">Deepseek Reasoner</option>
-                            <option value="claude-3-7-sonnet-20250219">Claude 3.5 Sonnet</option>
-                            <option value="grok-2-latest">Grok 2</option>
+                            <option value="o3-mini">O3 Mini Thinking</option>
                         </Select>
                     </FormControl>
 

@@ -27,6 +27,7 @@ const BulkCreator = () => {
     const [recipeTitles, setRecipeTitles] = useState([]);
     const [titleGenerating, setTitleGenerating] = useState(false);
     const [titlesError, setTitlesError] = useState('');
+    const [model, setModel] = useState('gemini-2.0-flash-thinking-exp-01-21');
 
     const [languages, setLanguages] = useState(['en']);
     const [recipeGenerating, setRecipeGenerating] = useState(false);
@@ -50,7 +51,7 @@ const BulkCreator = () => {
                 body: JSON.stringify({
                     cuisine: cuisine,
                     count: numTitles,
-                    model: 'gemini-2.0-flash-thinking-exp-01-21'
+                    model
                 })
             });
 
@@ -105,9 +106,9 @@ const BulkCreator = () => {
                         body: JSON.stringify({
                             prompt: `${cuisine} ${title}`,
                             language: lang,
-                            model: 'gemini-2.0-flash-thinking-exp-01-21',
+                            model,
                             temperature: 0.7,
-                            deepResearch: false,
+                            deepResearch: true,
                             imageSource: 'unsplash'
                         })
                     });
@@ -198,6 +199,19 @@ const BulkCreator = () => {
                 >
                     <NumberInputField />
                 </NumberInput>
+            </FormControl>
+
+            <FormControl mb={4}>
+                <FormLabel>AI Model</FormLabel>
+                <Select value={model} onChange={(e) => setModel(e.target.value)}>
+                    <option value="gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+                    <option value="gemini-2.0-flash-thinking-exp-01-21">
+                        Gemini 2.0 Flash Thinking
+                    </option>
+                    <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro Exp</option>
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="o3-mini">O3 Mini Thinking</option>
+                </Select>
             </FormControl>
 
             <Button

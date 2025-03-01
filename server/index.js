@@ -18,6 +18,7 @@ import adminRoutes from './admin.js';
 import { authenticateToken, isAdmin } from './middleware/auth.js';
 import { fetchSearchResults, searchWebContent } from './search.js';
 import { enrichRecipeMetadata, generateUniqueSlug } from './utils.js';
+import { getTextGpt } from './openai';
 
 dotenv.config();
 
@@ -53,6 +54,12 @@ adminRoutes(app);
 
 const generateAIResponse = async (prompt, model, temperature = 0.7) => {
     switch (model) {
+        case 'o3-mini':
+        case 'gpt-4o-mini': {
+            return await getTextGpt(prompt, model, temperature);
+        }
+        case 'gemini-2.0-pro-exp-02-05':
+        case 'gemini-2.0-flash-001':
         case 'gemini-2.0-flash-thinking-exp-01-21':
             return await getTextGemini(prompt, model, temperature);
         default:
